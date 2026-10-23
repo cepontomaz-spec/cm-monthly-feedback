@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lisca – feedback results</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' text-anchor='middle' fill='%23fff'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="demo" class="demo" hidden>DEMO MODE – showing answers saved in this browser only. Any password works.</div>
+
+<div class="util"><div class="wrap in">
+  <div class="l"><span>Lisca · Sales feedback</span><span id="u-upd"></span></div>
+  <div class="r"><span class="edchip" id="u-chip" hidden>Results</span><button class="tbtn" type="button" id="logout" hidden>Log out</button></div>
+</div></div>
+
+<header class="top"><div class="wrap in">
+  <a class="logo" href="index.html" aria-label="Lisca – survey"></a>
+  <nav class="menu" aria-label="Menu"><a href="index.html">Monthly feedback</a><a href="results.html" class="on">Results</a></nav>
+</div></header>
+
+<main>
+<section class="wrap">
+  <div class="sec-h">
+    <h1>Feedback results</h1>
+    <div class="eb">Country Sales Managers</div>
+    <p class="sub" id="sub">Answers are collected per market and month. When someone sends the form again, their newest answers replace the old ones.</p>
+  </div>
+
+  <form class="login" id="login" novalidate>
+    <div class="fld"><label for="pw">Results password</label><input id="pw" type="password" autocomplete="current-password"></div>
+    <div class="formerr" id="login-err" role="alert"></div>
+    <button class="btn" type="submit" id="login-btn">Show results</button>
+  </form>
+
+  <div id="dash" hidden>
+    <div class="toolbar">
+      <div class="fld"><label for="mf">Month</label><select id="mf"></select></div>
+      <button class="btn ghost" type="button" id="refresh">Refresh</button>
+      <button class="btn" type="button" id="csv">Export CSV</button>
+    </div>
+    <div id="body"></div>
+  </div>
+</section>
+</main>
+
+<div id="modal" class="modal" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<footer class="ft"><div class="wrap in"><span class="logo" aria-hidden="true"></span><span>Lisca d.o.o., Sevnica · internal feedback for Country Sales Managers</span></div></footer>
+
+<script>
+/* ------------------------------------------------------------------
+   Lisca – Country Sales Managers feedback: settings shared by both pages.
+   Edit MARKETS to match the people who receive the link.
+   ------------------------------------------------------------------ */
+window.CSM = (function () {
+  "use strict";
+
+  var MARKETS = [
+    "Austria", "Bosnia and Herzegovina", "Croatia", "Czech Republic", "Finland & Baltics",
+    "France", "Germany", "Hungary", "Italy", "Montenegro", "North Macedonia", "Poland",
+    "Russia", "Scandinavia", "Serbia", "Slovakia", "Slovenia", "Spain", "Switzerland",
+    "United Kingdom", "USA"
+  ];
+
+  /* Question texts, as sent in the questionnaire. Used by the survey, the results page and the CSV. */
+  var Q = {
+    salesRating:    "How do you rate your sales for the current month?",
+    campaign:       "Did you carry out any sales promotion campaigns?",
+    campaignRating: "What was the response to the campaign?",
+    event:          "Did you host or support any special events in the market or at your customers?",
+    eventRating:    "What was the response to the event?",
+    positive:       "Express at least one positive activity or development in the market.",
+    negatives:      "Express up to two negative developments in the market.",
+    wishes:         "List up to three activities or offers you would like to see prepared for the SS27 or AW27 season.",
+    biB2B:          "Have you arranged weekly BI reports and B2B access?",
+    stockInfo:      "Do you read the weekly stock information we send via email, and do you pass it on to your agents and sales staff in the market?"
+  };
+  var SCALE = ["Very poor", "Poor", "Average", "Good", "Excellent"];
+
+  /* ---------- months ---------- */
+  function monthKey(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); }
+  function monthLabel(k) {
+    var p = String(k).split("-");
+    try { return new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric" }).format(new Date(+p[0], +p[1] - 1, 1)); }
+    catch (e) { return k; }
+  }
+  function recentMonths(n) {
+    var out = [], d = new Date();
+    for (var i = 0; i < n; i++) out.push(monthKey(new Date(d.getFullYear(), d.getMonth() - i, 1)));
+    return out;
+  }
+
+  /* ---------- storage: Netlify functions, or this browser when opened from disk ---------- */
+  var DEMO = location.protocol === "file:";
+  var DEMO_KEY = "lisca-csm-demo";
+  function demoAll() { try { return JSON.parse(localStorage.getItem(DEMO_KEY) || "{}"); } catch (e) { return {}; } }
+  function demoPut(all) { try { localStorage.setItem(DEMO_KEY, JSON.stringify(all)); } catch (e) {} }
+  function slug(s) {
+    return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "x";
+  }
+  function recordKey(r) { return r.month + "/" + slug(r.country) + "--" + slug(r.name); }
+
+  function http(method, url, body, key) {
+    var h = { "Content-Type": "application/json" };
+    if (key) h["X-Results-Key"] = key;
+    return fetch(url, { method: method, headers: h, body: body ? JSON.stringify(body) : undefined, cache: "no-store" })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok) throw { status: r.status, code: j.error || ("http_" + r.status), field: j.field };
+          return j;
+        });
+      }, function () { throw { code: "network" }; });
+  }
+
+  function submit(rec) {
+    if (!DEMO) return http("POST", "/api/submit", rec);
+    var all = demoAll(), k = recordKey(rec), prev = all[k], now = new Date().toISOString();
+    var out = Object.assign({}, rec, { key: k, submittedAt: now, firstSubmittedAt: prev ? prev.firstSubmittedAt : now, revisions: prev ? (prev.revisions || 0) + 1 : 0 });
+    delete out.website;
+    all[k] = out; demoPut(all);
+    return Promise.resolve({ ok: true, key: k, updated: !!prev });
+  }
+  function results(key) {
+    if (!DEMO) return http("GET", "/api/results", null, key);
+    var all = demoAll();
+    return Promise.resolve({ entries: Object.keys(all).map(function (k) { return all[k]; }) });
+  }
+  function remove(key, recKey) {
+    if (!DEMO) return http("DELETE", "/api/results?key=" + encodeURIComponent(recKey), null, key);
+    var all = demoAll(); delete all[recKey]; demoPut(all);
+    return Promise.resolve({ ok: true });
+  }
+  function resetDemo() { try { localStorage.removeItem(DEMO_KEY); } catch (e) {} }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  return {
+    MARKETS: MARKETS, Q: Q, SCALE: SCALE, DEMO: DEMO,
+    monthKey: monthKey, monthLabel: monthLabel, recentMonths: recentMonths,
+    submit: submit, results: results, remove: remove, resetDemo: resetDemo, esc: esc
+  };
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  var C = window.CSM, Q = C.Q, esc = C.esc;
+  function $(id) { return document.getElementById(id); }
+  var PW = "lisca-csm-results-key";
+  var S = { key: "", entries: [], month: "", loadedAt: null, open: null, delArmed: false };
+  if (C.DEMO) $("demo").hidden = false;
+
+  try { S.key = sessionStorage.getItem(PW) || ""; } catch (e) {}
+  if (S.key) load(true);
+
+  $("login").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    S.key = $("pw").value.trim();
+    if (!S.key) { $("login-err").textContent = "Enter the password."; return; }
+    load(true);
+  });
+  $("logout").addEventListener("click", function () {
+    try { sessionStorage.removeItem(PW); } catch (e) {}
+    S.key = ""; S.entries = []; $("dash").hidden = true; $("login").hidden = false; $("logout").hidden = true; $("u-chip").hidden = true; $("u-upd").textContent = ""; $("pw").value = "";
+  });
+  $("refresh").addEventListener("click", function () { load(false); });
+  $("mf").addEventListener("change", function () { S.month = $("mf").value; render(); });
+  $("csv").addEventListener("click", exportCsv);
+
+  function load(first) {
+    $("login-btn").disabled = true;
+    return C.results(S.key).then(function (r) {
+      S.entries = (r.entries || []).filter(function (e) { return e && e.month; });
+      S.loadedAt = new Date();
+      try { sessionStorage.setItem(PW, S.key); } catch (e) {}
+      $("login").hidden = true; $("dash").hidden = false; $("logout").hidden = false; $("u-chip").hidden = false; $("login-err").textContent = "";
+      $("u-upd").textContent = "Loaded " + S.loadedAt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+      monthOptions(first);
+      render();
+      if (!first) toast("Results refreshed.");
+    }, function (e) {
+      var c = e && e.code;
+      if (c === "unauthorized") { try { sessionStorage.removeItem(PW); } catch (x) {} $("login").hidden = false; $("dash").hidden = true; $("login-err").textContent = "Wrong password."; }
+      else if (c === "not_configured") $("login-err").textContent = "The results password is not set up yet (RESULTS_KEY in Netlify).";
+      else if (first) $("login-err").textContent = "Could not load results (" + (c || "error") + ").";
+      else toast("Could not refresh (" + (c || "error") + ").");
+    }).then(function () { $("login-btn").disabled = false; });
+  }
+  setInterval(function () { if (S.key && !$("dash").hidden && !document.hidden && !S.open) load(false).catch(function () {}); }, 120000);
+
+  function monthOptions(first) {
+    var ms = {}; S.entries.forEach(function (e) { ms[e.month] = 1; });
+    ms[C.monthKey(new Date())] = 1;
+    var keys = Object.keys(ms).sort().reverse();
+    if (first || (S.month && S.month !== "all" && keys.indexOf(S.month) < 0)) {
+      var withData = keys.filter(function (k) { return S.entries.some(function (e) { return e.month === k; }); });
+      S.month = withData[0] || keys[0];
+    }
+    $("mf").innerHTML = keys.map(function (k) {
+      var n = S.entries.filter(function (e) { return e.month === k; }).length;
+      return '<option value="' + k + '"' + (k === S.month ? " selected" : "") + '>' + esc(C.monthLabel(k)) + ' · ' + n + '</option>';
+    }).join("") + '<option value="all"' + (S.month === "all" ? " selected" : "") + '>All months · ' + S.entries.length + '</option>';
+  }
+
+  function list() {
+    return S.entries.filter(function (e) { return S.month === "all" || e.month === S.month; })
+      .sort(function (a, b) { return (b.month).localeCompare(a.month) || String(a.country).localeCompare(String(b.country)) || String(a.name).localeCompare(String(b.name)); });
+  }
+  function avg(a) { return a.length ? a.reduce(function (s, x) { return s + x; }, 0) / a.length : null; }
+  function f1(x) { return x == null ? "–" : x.toFixed(1); }
+  function dots(n) { var h = '<span class="dots" aria-hidden="true">'; for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? "f" : "") + '"></i>'; return h + '</span>'; }
+  function ynCell(v, rating) {
+    if (v === "yes") return '<span class="yes">Yes</span>' + (rating ? ' · ' + rating + '/5' : '');
+    if (v === "no") return '<span class="no">No</span>';
+    return '<span class="na">–</span>';
+  }
+  function fmtDate(iso) { try { return new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
+
+  function stat(meta, v, p) { return '<div class="stat"><span class="meta">' + esc(meta) + '</span><div class="v">' + v + '</div>' + (p ? '<p>' + esc(p) + '</p>' : '') + '</div>'; }
+
+  function render() {
+    var L = list(), n = L.length, h = "";
+    var label = S.month === "all" ? "All months" : C.monthLabel(S.month);
+    if (!n) {
+      $("body").innerHTML = '<div class="block"><div class="empty">No answers for ' + esc(label) + ' yet. Share the survey link: <strong>' + esc(surveyUrl()) + '</strong></div></div>' + coverage([]);
+      return;
+    }
+    var sales = L.map(function (e) { return e.salesRating; }).filter(Boolean);
+    var camp = L.filter(function (e) { return e.campaign === "yes"; }), ev = L.filter(function (e) { return e.event === "yes"; });
+    var campR = camp.map(function (e) { return e.campaignRating; }).filter(Boolean), evR = ev.map(function (e) { return e.eventRating; }).filter(Boolean);
+    var bi = L.filter(function (e) { return e.biB2B === "yes"; }).length, st = L.filter(function (e) { return e.stockInfo === "yes"; }).length;
+
+    h += '<div class="stats">'
+      + stat("Responses", n + (S.month !== "all" ? ' <small>/ ' + C.MARKETS.length + '</small>' : ''), S.month !== "all" ? "markets on the list" : "all months")
+      + stat("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average")
+      + stat("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "response " + f1(avg(campR)) + " / 5" : "no campaigns")
+      + stat("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "response " + f1(avg(evR)) + " / 5" : "no events")
+      + stat("BI reports & B2B", bi + ' <small>/ ' + n + '</small>', "arranged")
+      + stat("Weekly stock info", st + ' <small>/ ' + n + '</small>', "read and passed on")
+      + '</div>';
+
+    if (S.month !== "all") h += coverage(L);
+
+    h += '<div class="block"><div class="lh"><span>Answers by market</span><span class="muted" style="font-size:12px;letter-spacing:.06em">Click a row for all answers</span></div>'
+      + '<div class="tbl-wrap"><table class="res"><thead><tr><th>Market</th>' + (S.month === "all" ? '<th>Month</th>' : '') + '<th>Sales</th><th>Campaign</th><th>Event</th><th>BI &amp; B2B</th><th>Stock info</th><th>Sent</th></tr></thead><tbody>'
+      + L.map(function (e) {
+        return '<tr data-key="' + esc(e.key) + '" tabindex="0"><td class="who"><b>' + esc(e.country) + '</b><span>' + esc(e.name) + '</span></td>'
+          + (S.month === "all" ? '<td>' + esc(C.monthLabel(e.month)) + '</td>' : '')
+          + '<td style="white-space:nowrap">' + dots(e.salesRating) + e.salesRating + '</td>'
+          + '<td>' + ynCell(e.campaign, e.campaignRating) + '</td><td>' + ynCell(e.event, e.eventRating) + '</td>'
+          + '<td>' + ynCell(e.biB2B) + '</td><td>' + ynCell(e.stockInfo) + '</td>'
+          + '<td class="muted" style="white-space:nowrap;font-size:12.5px">' + esc(fmtDate(e.submittedAt)) + (e.revisions ? ' · edited' : '') + '</td></tr>';
+      }).join("") + '</tbody></table></div></div>';
+
+    function voice(title, pick) {
+      var items = [];
+      L.forEach(function (e) { pick(e).forEach(function (t) { if (t) items.push({ t: t, by: e.country + " · " + e.name + (S.month === "all" ? " · " + C.monthLabel(e.month) : "") }); }); });
+      return '<div><div class="lh"><span>' + esc(title) + '</span><span class="muted" style="font-size:12px">' + items.length + '</span></div>'
+        + (items.length ? items.map(function (i) { return '<div class="vitem"><p>' + esc(i.t) + '</p><div class="by">' + esc(i.by) + '</div></div>'; }).join("") : '<p class="muted">Nothing yet.</p>') + '</div>';
+    }
+    h += '<div class="block"><div class="voice">'
+      + voice("Positive developments", function (e) { return [e.positive]; })
+      + voice("Negative developments", function (e) { return e.negatives || []; })
+      + voice("Wished for SS27 / AW27", function (e) { return e.wishes || []; })
+      + '</div></div>';
+    $("body").innerHTML = h;
+  }
+  function coverage(L) {
+    if (S.month === "all") return "";
+    var got = {}; L.forEach(function (e) { got[e.country] = 1; });
+    var extra = Object.keys(got).filter(function (c) { return C.MARKETS.indexOf(c) < 0; });
+    var missing = C.MARKETS.filter(function (m) { return !got[m]; }).length;
+    return '<div class="block"><div class="lh"><span>Markets</span><span class="muted" style="font-size:12px;letter-spacing:.06em">' + (missing ? missing + " not answered yet" : "all answered") + '</span></div><div class="missing">'
+      + C.MARKETS.concat(extra).map(function (m) { return '<span class="mk' + (got[m] ? " ok" : "") + '">' + (got[m] ? "✓ " : "") + esc(m) + '</span>'; }).join("") + '</div></div>';
+  }
+  function surveyUrl() { return C.DEMO ? "index.html" : location.origin + "/"; }
+
+  /* detail modal */
+  document.addEventListener("click", function (ev) {
+    var tr = ev.target.closest("tr[data-key]");
+    if (tr) { openEntry(tr.getAttribute("data-key")); return; }
+    if (ev.target.id === "modal") closeModal();
+    var a = ev.target.closest("[data-act]"); if (!a) return;
+    var act = a.getAttribute("data-act");
+    if (act === "close") closeModal();
+    if (act === "del") del(a);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && S.open) closeModal();
+    if (ev.key === "Enter" && ev.target.matches && ev.target.matches("tr[data-key]")) openEntry(ev.target.getAttribute("data-key"));
+  });
+  function yn(v) { return v === "yes" ? "Yes" : v === "no" ? "No" : "–"; }
+  function openEntry(k) {
+    var e = S.entries.filter(function (x) { return x.key === k; })[0]; if (!e) return;
+    S.open = k; S.delArmed = false;
+    var rows = [
+      [Q.salesRating, e.salesRating + " / 5 – " + C.SCALE[e.salesRating - 1]],
+      [Q.campaign, yn(e.campaign)]
+    ];
+    if (e.campaign === "yes") rows.push([Q.campaignRating, e.campaignRating + " / 5"]);
+    rows.push([Q.event, yn(e.event)]);
+    if (e.event === "yes") rows.push([Q.eventRating, e.eventRating + " / 5"]);
+    rows.push([Q.positive, e.positive || "–"]);
+    rows.push([Q.negatives, (e.negatives || []).map(function (x, i) { return (i + 1) + ". " + x; }).join("\n") || "–"]);
+    rows.push([Q.wishes, (e.wishes || []).map(function (x, i) { return (i + 1) + ". " + x; }).join("\n") || "–"]);
+    rows.push([Q.biB2B, yn(e.biB2B)]);
+    rows.push([Q.stockInfo, yn(e.stockInfo)]);
+    var m = $("modal");
+    m.innerHTML = '<div class="panel" role="dialog" aria-modal="true" aria-labelledby="m-h"><h2 id="m-h">' + esc(e.country) + '</h2><p class="sub">' + esc(e.name) + ' · ' + esc(C.monthLabel(e.month)) + ' · sent ' + esc(fmtDate(e.submittedAt)) + (e.revisions ? ' (edited ' + e.revisions + '×)' : '') + '</p>'
+      + '<dl class="ans">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join("") + '</dl>'
+      + '<div class="mfoot"><button class="tbtn danger" type="button" data-act="del">Delete this answer</button><button class="btn" type="button" data-act="close">Close</button></div></div>';
+    m.hidden = false;
+    m.querySelector('[data-act="close"]').focus();
+  }
+  function closeModal() { S.open = null; $("modal").hidden = true; $("modal").innerHTML = ""; }
+  function del(btn) {
+    if (!S.delArmed) { S.delArmed = true; btn.textContent = "Click again to delete permanently"; return; }
+    var k = S.open; btn.disabled = true;
+    C.remove(S.key, k).then(function () {
+      S.entries = S.entries.filter(function (x) { return x.key !== k; });
+      closeModal(); monthOptions(false); render(); toast("Answer deleted.");
+    }, function (e) { btn.disabled = false; toast("Could not delete (" + ((e && e.code) || "error") + ")."); });
+  }
+
+  /* CSV (semicolon-separated, opens directly in Excel with Slovenian settings) */
+  function exportCsv() {
+    var L = list();
+    if (!L.length) { toast("Nothing to export for this month."); return; }
+    var head = ["Month", "Market", "Name", Q.salesRating, Q.campaign, Q.campaignRating, Q.event, Q.eventRating, Q.positive,
+      "Negative development 1", "Negative development 2", "Activity / offer 1", "Activity / offer 2", "Activity / offer 3", Q.biB2B, Q.stockInfo, "Sent", "Times edited"];
+    function cell(v) { var s = v == null ? "" : String(v); return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+    var rows = L.map(function (e) {
+      var n = e.negatives || [], w = e.wishes || [];
+      return [e.month, e.country, e.name, e.salesRating, yn(e.campaign), e.campaignRating || "", yn(e.event), e.eventRating || "", e.positive,
+        n[0] || "", n[1] || "", w[0] || "", w[1] || "", w[2] || "", yn(e.biB2B), yn(e.stockInfo), e.submittedAt ? e.submittedAt.replace("T", " ").slice(0, 16) : "", e.revisions || 0];
+    });
+    var csv = "﻿" + [head].concat(rows).map(function (r) { return r.map(cell).join(";"); }).join("\r\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = "lisca-csm-feedback-" + (S.month === "all" ? "all-months" : S.month) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
+  var tt;
+  function toast(m) { var el = $("toast"); el.textContent = m; el.hidden = false; clearTimeout(tt); tt = setTimeout(function () { el.hidden = true; }, 3500); }
+})();
+</script>
+</body>
+</html>
