@@ -87,6 +87,24 @@ export default async (req) => {
     return json({ ok: true });
   }
 
+  /* Move an answer to another month (when it was sent under the wrong month) */
+  if (req.method === "PATCH") {
+    let b;
+    try { b = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
+    const key = String(b?.key || ""), month = String(b?.month || "");
+    if (!/^\d{4}-\d{2}\/[a-z0-9-]+$/.test(key)) return json({ error: "bad_key" }, 400);
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return json({ error: "bad_month" }, 400);
+    const rec = await s.get(key, { type: "json" });
+    if (!rec) return json({ error: "not_found" }, 404);
+    const newKey = month + key.slice(7);
+    if (newKey === key) return json({ ok: true, key, entry: rec });
+    if (await s.get(newKey, { type: "json" })) return json({ error: "exists" }, 409);
+    const entry = { ...rec, key: newKey, month, movedFrom: rec.month };
+    await s.setJSON(newKey, entry);
+    await s.delete(key);
+    return json({ ok: true, key: newKey, entry });
+  }
+
   return json({ error: "method_not_allowed" }, 405);
 };
 

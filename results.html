@@ -9,6 +9,117 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="style.css">
+<style id="report-style">
+/* ---------- PDF report: A4 sheet, same Lisca look, always printed on white paper ---------- */
+#rep{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;background:var(--wash)}
+.rep-bar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px 16px;flex-wrap:wrap;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--bg);border-bottom:1px solid var(--line)}
+.rep-bar .t{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rep-bar .t b{color:var(--ink);font-weight:500}
+.rep-bar .acts{display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center}
+.rep-m{display:flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.rep-m select{font:500 14px/1.3 var(--f-ui);letter-spacing:0;text-transform:none;color:var(--ink);background:var(--bg);border:1px solid var(--ink);border-radius:4px;padding:6px 10px;min-height:32px}
+.mv{display:flex;align-items:flex-end;gap:10px 12px;flex-wrap:wrap;padding:14px 16px;background:var(--wash);border-radius:5px}
+.mv .fld{min-width:200px}
+.mv .hint{flex-basis:100%;margin:0;font-size:12.5px;color:var(--muted)}
+.r-title .eb.top{margin:0 0 2.5mm}
+.r-title h1.month{font-size:26pt;letter-spacing:.02em}
+.rep-bar .hint{flex-basis:100%;font-size:12.5px;color:var(--muted)}
+.rep-scroll{flex:1;overflow:auto;padding:24px 16px calc(40px + env(safe-area-inset-bottom,0px))}
+.rep-sheet{
+  --bg:#ffffff;--surface:#ffffff;--wash:#f4f3f1;--line:#e2e1de;--ink:#0d0d0d;--ink-2:#4a4f55;--muted:#7a7e84;--ok:#2f7a57;--bad:#b03f3a;
+  color-scheme:light;width:210mm;min-height:297mm;margin:0 auto;padding:15mm 14mm 16mm;background:var(--bg);color:var(--ink);
+  box-shadow:0 2px 6px rgba(0,0,0,.08),0 14px 40px rgba(0,0,0,.12);font:400 9.5pt/1.45 var(--f-ui)}
+.rep-sheet,.rep-sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+.r-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8mm;padding-bottom:4mm;border-bottom:1px solid var(--ink)}
+.r-head img{display:block;height:8mm;width:auto}
+.r-head .m{text-align:right;font-size:7.5pt;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.r-head .m b{display:block;color:var(--ink);font-weight:500;font-size:8.5pt}
+.r-title{text-align:center;margin:9mm 0 7mm}
+.r-title h1{margin:0;font-size:20pt;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.15;text-wrap:balance}
+.r-title .eb{margin-top:2.5mm;font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase}
+.r-title .sub{margin:2.5mm auto 0;max-width:120mm;color:var(--ink-2);font-size:9pt}
+
+.r-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3.5mm}
+.r-kpi{position:relative;border:1px solid var(--line);border-radius:1.5mm;padding:8mm 5mm 4mm;break-inside:avoid}
+.r-kpi .k{position:absolute;top:3mm;left:5mm;right:3mm;font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-kpi .v{font-size:19pt;font-weight:500;line-height:1.05;font-variant-numeric:tabular-nums}
+.r-kpi .v small{font-size:9pt;font-weight:400;color:var(--muted)}
+.r-kpi p{margin:1mm 0 0;font-size:8pt;color:var(--ink-2)}
+
+.r-sec{margin-top:9mm}
+.r-sec.newpage{break-before:page}
+.r-sec h2{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;margin:0 0 4mm;padding-bottom:2mm;border-bottom:1px solid var(--ink);font-size:8.5pt;font-weight:500;letter-spacing:.15em;text-transform:uppercase;break-after:avoid}
+.r-sec h2 span{font-size:7.5pt;font-weight:400;letter-spacing:.06em;color:var(--muted)}
+.r-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9mm}
+.r-panel{min-width:0;break-inside:avoid}
+.r-panel h3{margin:0 0 1mm;font-size:9pt;font-weight:500}
+.r-panel .note{margin:0 0 3.5mm;font-size:8pt;color:var(--ink-2)}
+.r-panel .list{margin:3mm 0 0;font-size:8pt;color:var(--ink-2)}
+.r-panel .list b{font-weight:500;color:var(--ink)}
+
+/* vertical distribution 1–5 */
+.r-dist{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3mm;align-items:end;height:30mm;border-bottom:1px solid var(--ink)}
+.r-dist.sm{height:22mm}
+.r-dist .col{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.r-dist .n{font-size:7.5pt;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:.8mm}
+.r-dist .n.z{color:var(--muted);font-weight:400}
+.r-dist .bar{width:62%;background:var(--ink);border-radius:.6mm .6mm 0 0}
+.r-xl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3mm;margin-top:1.5mm;text-align:center;font-size:6.8pt;line-height:1.25;color:var(--muted);letter-spacing:.04em}
+.r-xl b{display:block;font-size:8pt;color:var(--ink);font-weight:500}
+
+/* horizontal bars by market, scale 0–5 */
+.r-hb{display:grid;grid-template-columns:32mm minmax(0,1fr) 9mm;gap:1.6mm 3mm;align-items:center}
+.r-hb .lab{font-size:8pt;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-hb .trk{position:relative;height:3.4mm;background:repeating-linear-gradient(to right,var(--wash) 0,var(--wash) calc(20% - 1px),var(--line) calc(20% - 1px),var(--line) 20%)}
+.r-hb .fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
+.r-hb .val{font-size:8pt;font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.r-hb .axis{grid-column:2;position:relative;height:3.5mm;font-size:6.8pt;color:var(--muted)}
+.r-hb .axis span{position:absolute;top:0;transform:translateX(-50%)}
+
+/* yes / no share */
+.r-yn{display:flex;height:5mm;border-radius:.8mm;overflow:hidden;background:var(--wash)}
+.r-yn .y{background:var(--ok)}.r-yn .n{background:var(--bad)}
+.r-ynl{display:flex;justify-content:space-between;gap:4mm;margin-top:1.5mm;font-size:8pt;font-variant-numeric:tabular-nums}
+.r-ynl .yes{color:var(--ok);font-weight:500}.r-ynl .no{color:var(--bad);font-weight:500}
+
+/* overview table */
+.r-tbl{width:100%;border-collapse:collapse;font-size:8.3pt}
+.r-tbl th{text-align:left;font-size:6.8pt;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0 2mm 2mm;border-bottom:1px solid var(--ink);white-space:nowrap}
+.r-tbl td{padding:2mm;border-bottom:1px solid var(--line);vertical-align:middle}
+.r-tbl tr{break-inside:avoid}
+.r-tbl td:first-child,.r-tbl th:first-child{padding-left:0}
+.r-tbl .mk{font-weight:500}
+.r-tbl .yes{color:var(--ok);font-weight:500}.r-tbl .no{color:var(--bad);font-weight:500}.r-tbl .na{color:var(--muted)}
+.r-tbl .dots i{width:2mm;height:2mm}
+
+/* market activities */
+.r-mkt{padding:3.5mm 0 4mm;border-bottom:1px solid var(--line);break-inside:avoid}
+.r-mkt:first-of-type{padding-top:0}
+.r-mkt .hd{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;flex-wrap:wrap;margin-bottom:2.5mm}
+.r-mkt .hd h4{margin:0;font-size:11pt;font-weight:500}
+.r-mkt .chips{display:flex;gap:1.5mm;flex-wrap:wrap}
+.r-mkt .chip{font-size:7pt;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:5mm;padding:.4mm 2.2mm;color:var(--ink-2);white-space:nowrap}
+.r-mkt .chip.on{border-color:var(--ink);color:var(--ink)}
+.r-mkt .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5mm}
+.r-mkt .cols>div{min-width:0}
+.r-mkt .lbl{font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1mm}
+.r-mkt ul{margin:0;padding-left:3.5mm;font-size:8.3pt}
+.r-mkt li{margin:0 0 .8mm;overflow-wrap:anywhere}
+.r-mkt .none{font-size:8.3pt;color:var(--muted)}
+.r-miss{font-size:8.5pt;color:var(--ink-2)}
+.r-foot{margin-top:9mm;padding-top:3mm;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:4mm;flex-wrap:wrap;font-size:7pt;color:var(--muted);letter-spacing:.04em}
+
+@page{size:A4;margin:13mm 13mm 15mm}
+@media print{
+  html.rep-open,html.rep-open body{background:#fff!important;padding:0!important}
+  html.rep-open body>:not(#rep){display:none!important}
+  html.rep-open #rep{position:static;display:block;background:none}
+  html.rep-open .rep-bar{display:none!important}
+  html.rep-open .rep-scroll{padding:0;overflow:visible}
+  html.rep-open .rep-sheet{width:auto;min-height:0;padding:0;margin:0;box-shadow:none}
+}
+</style>
 </head>
 <body>
 <div id="demo" class="demo" hidden>DEMO MODE – showing answers saved in this browser only. Any password works.</div>
@@ -41,7 +152,9 @@
     <div class="toolbar">
       <div class="fld"><label for="mf">Month</label><select id="mf"></select></div>
       <button class="btn ghost" type="button" id="refresh">Refresh</button>
-      <button class="btn" type="button" id="csv">Export CSV</button>
+      <button class="btn ghost" type="button" id="csv">Export CSV</button>
+      <button class="btn" type="button" id="pdf">PDF report</button>
+      <button class="btn ghost" type="button" id="sample" hidden>Add sample answers</button>
     </div>
     <div id="body"></div>
   </div>
@@ -50,6 +163,15 @@
 
 <div id="modal" class="modal" hidden></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<div id="rep" hidden role="dialog" aria-modal="true" aria-labelledby="rep-t">
+  <div class="rep-bar">
+    <span class="t" id="rep-t"><b>PDF report</b> · A4 preview</span>
+    <div class="acts"><label class="rep-m" for="rep-month">Report month <select id="rep-month"></select></label><button class="btn sm" type="button" id="rep-print">Save as PDF</button><button class="btn sm ghost" type="button" id="rep-close">Close</button></div>
+    <span class="hint">In the print window, choose <b>Save as PDF</b> (or Microsoft Print to PDF) as the printer.</span>
+  </div>
+  <div class="rep-scroll"><article class="rep-sheet" id="rep-sheet"></article></div>
+</div>
 
 <footer class="ft"><div class="wrap in"><span class="logo" aria-hidden="true"></span><span>Lisca d.o.o., Sevnica · internal feedback for Country Sales Managers</span></div></footer>
 
@@ -137,6 +259,17 @@ window.CSM = (function () {
     var all = demoAll(); delete all[recKey]; demoPut(all);
     return Promise.resolve({ ok: true });
   }
+  function move(key, recKey, month) {
+    if (!DEMO) return http("PATCH", "/api/results", { key: recKey, month: month }, key);
+    var all = demoAll(), rec = all[recKey];
+    if (!rec) return Promise.reject({ code: "not_found" });
+    var nk = month + recKey.slice(7);
+    if (nk === recKey) return Promise.resolve({ ok: true, key: nk, entry: rec });
+    if (all[nk]) return Promise.reject({ code: "exists" });
+    var entry = Object.assign({}, rec, { key: nk, month: month, movedFrom: rec.month });
+    all[nk] = entry; delete all[recKey]; demoPut(all);
+    return Promise.resolve({ ok: true, key: nk, entry: entry });
+  }
   function resetDemo() { try { localStorage.removeItem(DEMO_KEY); } catch (e) {} }
 
   function esc(s) {
@@ -148,7 +281,7 @@ window.CSM = (function () {
   return {
     MARKETS: MARKETS, Q: Q, SCALE: SCALE, DEMO: DEMO,
     monthKey: monthKey, monthLabel: monthLabel, recentMonths: recentMonths,
-    submit: submit, results: results, remove: remove, resetDemo: resetDemo, esc: esc
+    submit: submit, results: results, remove: remove, move: move, resetDemo: resetDemo, esc: esc
   };
 })();
 </script>
@@ -295,8 +428,10 @@ window.CSM = (function () {
     var act = a.getAttribute("data-act");
     if (act === "close") closeModal();
     if (act === "del") del(a);
+    if (act === "move") moveEntry(a);
   });
   document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !$("rep").hidden) { closeReport(); return; }
     if (ev.key === "Escape" && S.open) closeModal();
     if (ev.key === "Enter" && ev.target.matches && ev.target.matches("tr[data-key]")) openEntry(ev.target.getAttribute("data-key"));
   });
@@ -319,9 +454,33 @@ window.CSM = (function () {
     var m = $("modal");
     m.innerHTML = '<div class="panel" role="dialog" aria-modal="true" aria-labelledby="m-h"><h2 id="m-h">' + esc(e.country) + '</h2><p class="sub">' + esc(e.name) + ' · ' + esc(C.monthLabel(e.month)) + ' · sent ' + esc(fmtDate(e.submittedAt)) + (e.revisions ? ' (edited ' + e.revisions + '×)' : '') + '</p>'
       + '<dl class="ans">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join("") + '</dl>'
+      + moveBlock(e)
       + '<div class="mfoot"><button class="tbtn danger" type="button" data-act="del">Delete this answer</button><button class="btn" type="button" data-act="close">Close</button></div></div>';
     m.hidden = false;
     m.querySelector('[data-act="close"]').focus();
+  }
+  function moveBlock(e) {
+    var ms = C.recentMonths(12);
+    if (ms.indexOf(e.month) < 0) ms.push(e.month);
+    return '<div class="mv"><div class="fld"><label for="mv-month">Feedback month</label><select id="mv-month">'
+      + ms.map(function (k) { return '<option value="' + k + '"' + (k === e.month ? " selected" : "") + '>' + esc(C.monthLabel(k)) + '</option>'; }).join("")
+      + '</select></div><button class="btn sm ghost" type="button" data-act="move">Move to this month</button>'
+      + '<p class="hint">Use this when the answer was sent under the wrong month.' + (e.movedFrom ? ' Moved here from ' + esc(C.monthLabel(e.movedFrom)) + '.' : '') + '</p></div>';
+  }
+  function moveEntry(btn) {
+    var k = S.open, to = $("mv-month").value, e = S.entries.filter(function (x) { return x.key === k; })[0];
+    if (!e) return;
+    if (to === e.month) { toast("This answer is already filed under " + C.monthLabel(to) + "."); return; }
+    btn.disabled = true;
+    C.move(S.key, k, to).then(function (r) {
+      var ne = r.entry || Object.assign({}, e, { key: r.key, month: to, movedFrom: e.month });
+      S.entries = S.entries.filter(function (x) { return x.key !== k; }).concat([ne]);
+      closeModal(); monthOptions(false); render(); toast("Answer moved to " + C.monthLabel(to) + ".");
+    }, function (er) {
+      btn.disabled = false;
+      var c = er && er.code;
+      toast(c === "exists" ? "This market already has an answer from the same person for " + C.monthLabel(to) + ". Delete one of them first." : "Could not move the answer (" + (c || "error") + ").");
+    });
   }
   function closeModal() { S.open = null; $("modal").hidden = true; $("modal").innerHTML = ""; }
   function del(btn) {
@@ -351,6 +510,200 @@ window.CSM = (function () {
     a.download = "lisca-csm-feedback-" + (S.month === "all" ? "all-months" : S.month) + ".csv";
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
+  /* ---------- PDF report (no names – activities shown by market) ---------- */
+  $("pdf").addEventListener("click", openReport);
+  $("rep-close").addEventListener("click", closeReport);
+  $("rep-print").addEventListener("click", printReport);
+  window.addEventListener("afterprint", function () { if (S.title) { document.title = S.title; S.title = null; } });
+
+  $("rep-month").addEventListener("change", function () {
+    S.month = $("rep-month").value;
+    $("mf").value = S.month;
+    render();
+    $("rep-sheet").innerHTML = buildReport(list());
+    $("rep").querySelector(".rep-scroll").scrollTop = 0;
+  });
+  function reportMonths() {
+    var ms = {};
+    S.entries.forEach(function (e) { ms[e.month] = (ms[e.month] || 0) + 1; });
+    return Object.keys(ms).sort().reverse().map(function (k) { return { k: k, n: ms[k] }; });
+  }
+  function openReport() {
+    var ms = reportMonths();
+    if (!ms.length) { toast("There are no answers yet."); return; }
+    /* The report is always for a month that has answers: keep the selected one, otherwise take the newest. */
+    if (S.month !== "all" && !ms.some(function (m) { return m.k === S.month; })) { S.month = ms[0].k; $("mf").value = S.month; render(); }
+    $("rep-month").innerHTML = ms.map(function (m) {
+      return '<option value="' + m.k + '"' + (m.k === S.month ? " selected" : "") + '>' + esc(C.monthLabel(m.k)) + ' · ' + m.n + (m.n === 1 ? " answer" : " answers") + '</option>';
+    }).join("") + '<option value="all"' + (S.month === "all" ? " selected" : "") + '>All months · ' + S.entries.length + ' answers</option>';
+    $("rep-sheet").innerHTML = buildReport(list());
+    $("rep").hidden = false;
+    document.documentElement.classList.add("rep-open");
+    document.body.style.overflow = "hidden";
+    $("rep-print").focus();
+  }
+  function closeReport() {
+    $("rep").hidden = true;
+    document.documentElement.classList.remove("rep-open");
+    document.body.style.overflow = "";
+    $("rep-sheet").innerHTML = "";
+    $("pdf").focus();
+  }
+  function printReport() {
+    var label = S.month === "all" ? "all months" : C.monthLabel(S.month);
+    if (!S.title) S.title = document.title;
+    document.title = "Lisca CSM feedback report - " + label;
+    var img = $("rep-sheet").querySelector("img");
+    var imgReady = !img || img.complete ? Promise.resolve() : new Promise(function (r) { img.onload = img.onerror = r; });
+    var fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    Promise.all([imgReady, fontsReady]).then(function () {
+      try { window.print(); } catch (e) { toast("Printing is not available here. Open the live results page to save the PDF."); }
+    });
+  }
+
+  function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+  function counts(vals) { var c = [0, 0, 0, 0, 0]; vals.forEach(function (v) { if (v >= 1 && v <= 5) c[v - 1]++; }); return c; }
+
+  function distChart(vals, small) {
+    var c = counts(vals), max = Math.max.apply(null, c) || 1, h = '<div class="r-dist' + (small ? " sm" : "") + '">';
+    c.forEach(function (n) {
+      h += '<div class="col"><span class="n' + (n ? "" : " z") + '">' + n + '</span><span class="bar" style="height:' + (n / max * 86).toFixed(1) + '%"></span></div>';
+    });
+    h += '</div><div class="r-xl">' + C.SCALE.map(function (s, i) { return '<div><b>' + (i + 1) + '</b>' + esc(s) + '</div>'; }).join("") + '</div>';
+    return h;
+  }
+  function hbars(items) {
+    var h = '<div class="r-hb">';
+    items.forEach(function (it) {
+      h += '<span class="lab">' + esc(it.label) + '</span><span class="trk"><span class="fill" style="width:' + (it.value / 5 * 100).toFixed(1) + '%"></span></span><span class="val">' + it.value.toFixed(1) + '</span>';
+    });
+    h += '<span></span><span class="axis">' + [0, 1, 2, 3, 4, 5].map(function (v) { return '<span style="left:' + (v * 20) + '%">' + v + '</span>'; }).join("") + '</span><span></span>';
+    return h + '</div>';
+  }
+  function ynShare(title, L, field) {
+    var y = L.filter(function (e) { return e[field] === "yes"; }), n = L.filter(function (e) { return e[field] === "no"; });
+    var noMk = uniq(n.map(function (e) { return e.country; }));
+    return '<div class="r-panel"><h3>' + esc(title) + '</h3><p class="note">' + y.length + ' of ' + L.length + ' answers · ' + pct(y.length, L.length) + '% yes</p>'
+      + '<div class="r-yn" aria-hidden="true"><span class="y" style="width:' + pct(y.length, L.length) + '%"></span><span class="n" style="width:' + (L.length ? 100 - pct(y.length, L.length) : 0) + '%"></span></div>'
+      + '<div class="r-ynl"><span class="yes">Yes ' + y.length + '</span><span class="no">No ' + n.length + '</span></div>'
+      + '<p class="list">' + (noMk.length ? '<b>Not yet:</b> ' + esc(noMk.join(", ")) : '<b>All answering markets: yes</b>') + '</p></div>';
+  }
+  function uniq(a) { var o = []; a.forEach(function (x) { if (o.indexOf(x) < 0) o.push(x); }); return o.sort(function (p, q) { return p.localeCompare(q); }); }
+  function ratingList(L, field, ratingField) {
+    var by = {};
+    L.forEach(function (e) { if (e[field] === "yes") (by[e.country] = by[e.country] || []).push(e[ratingField]); });
+    var ks = Object.keys(by).sort(function (a, b) { return a.localeCompare(b); });
+    return ks.length ? ks.map(function (k) { return esc(k) + ' ' + avg(by[k]).toFixed(by[k].length > 1 ? 1 : 0) + '/5'; }).join(" · ") : "";
+  }
+
+  function buildReport(L) {
+    var all = S.month === "all", label = all ? "All months" : C.monthLabel(S.month), n = L.length;
+    var today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    var markets = uniq(L.map(function (e) { return e.country; }));
+    var sales = L.map(function (e) { return e.salesRating; }).filter(Boolean);
+    var camp = L.filter(function (e) { return e.campaign === "yes"; }), ev = L.filter(function (e) { return e.event === "yes"; });
+    var campR = camp.map(function (e) { return e.campaignRating; }).filter(Boolean), evR = ev.map(function (e) { return e.eventRating; }).filter(Boolean);
+    var bi = L.filter(function (e) { return e.biB2B === "yes"; }).length, st = L.filter(function (e) { return e.stockInfo === "yes"; }).length;
+
+    var h = '<header class="r-head"><img src="logo.png" alt="Lisca"><div class="m"><b>Feedback report · ' + esc(label) + '</b>Country Sales Managers<br>Generated ' + esc(today) + '</div></header>';
+    h += '<div class="r-title"><div class="eb top">Country Sales Managers · ' + (all ? "Feedback report" : "Monthly feedback report") + '</div><h1 class="month">' + esc(label) + '</h1>'
+      + '<p class="sub">' + (all ? n + ' answers from ' + markets.length + ' markets.' : markets.length + ' of ' + C.MARKETS.length + ' markets answered.') + '</p></div>';
+
+    function kpi(k, v, p) { return '<div class="r-kpi"><span class="k">' + esc(k) + '</span><div class="v">' + v + '</div><p>' + esc(p) + '</p></div>'; }
+    h += '<div class="r-kpis">'
+      + kpi("Markets answered", markets.length + (all ? "" : ' <small>/ ' + C.MARKETS.length + '</small>'), all ? n + " answers in total" : "on the market list")
+      + kpi("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average rating")
+      + kpi("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "average response " + f1(avg(campR)) + " / 5" : "no campaigns reported")
+      + kpi("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "average response " + f1(avg(evR)) + " / 5" : "no events reported")
+      + kpi("BI reports & B2B access", pct(bi, n) + '<small>%</small>', bi + " of " + n + " arranged")
+      + kpi("Weekly stock information", pct(st, n) + '<small>%</small>', st + " of " + n + " read and passed on")
+      + '</div>';
+
+    /* sales */
+    var byMk = {};
+    L.forEach(function (e) { if (e.salesRating) (byMk[e.country] = byMk[e.country] || []).push(e.salesRating); });
+    var items = Object.keys(byMk).map(function (k) { return { label: k, value: avg(byMk[k]) }; })
+      .sort(function (a, b) { return b.value - a.value || a.label.localeCompare(b.label); });
+    h += '<section class="r-sec"><h2>Sales for the month<span>1 = very poor · 5 = excellent</span></h2><div class="r-two">'
+      + '<div class="r-panel"><h3>Distribution of ratings</h3><p class="note">' + sales.length + ' answers · average ' + f1(avg(sales)) + ' / 5</p>' + distChart(sales) + '</div>'
+      + '<div class="r-panel"><h3>Rating by market</h3><p class="note">' + (all ? "Average across the months shown" : "Highest first") + '</p>' + hbars(items) + '</div>'
+      + '</div></section>';
+
+    /* campaigns + events */
+    function actPanel(title, list, ratings, field, rfield, what) {
+      return '<div class="r-panel"><h3>' + esc(title) + '</h3><p class="note">' + list.length + ' of ' + n + ' answers' + (ratings.length ? ' · average response ' + f1(avg(ratings)) + ' / 5' : '') + '</p>'
+        + (ratings.length ? distChart(ratings, true) : '<p class="list">No ' + what + ' reported.</p>')
+        + (ratings.length ? '<p class="list"><b>By market:</b> ' + ratingList(L, field, rfield) + '</p>' : '') + '</div>';
+    }
+    h += '<section class="r-sec"><h2>Promotions and events<span>response rating 1–5</span></h2><div class="r-two">'
+      + actPanel("Sales promotion campaigns", camp, campR, "campaign", "campaignRating", "campaigns")
+      + actPanel("Special events in the market or at customers", ev, evR, "event", "eventRating", "events")
+      + '</div></section>';
+
+    /* reports + stock info */
+    h += '<section class="r-sec"><h2>Reports and stock information</h2><div class="r-two">'
+      + ynShare("Weekly BI reports and B2B access arranged", L, "biB2B")
+      + ynShare("Weekly stock information read and passed on", L, "stockInfo")
+      + '</div></section>';
+
+    /* overview table */
+    var rows = L.slice().sort(function (a, b) { return a.country.localeCompare(b.country) || a.month.localeCompare(b.month); });
+    function yn2(v, r) { return v === "yes" ? '<span class="yes">Yes</span>' + (r ? ' · ' + r + '/5' : '') : v === "no" ? '<span class="no">No</span>' : '<span class="na">–</span>'; }
+    h += '<section class="r-sec"><h2>Overview by market<span>' + esc(label) + ' · ' + n + ' answers</span></h2><table class="r-tbl"><thead><tr><th>Market</th>' + (all ? '<th>Month</th>' : '')
+      + '<th>Sales</th><th>Campaign</th><th>Event</th><th>BI &amp; B2B</th><th>Stock info</th></tr></thead><tbody>'
+      + rows.map(function (e) {
+        return '<tr><td class="mk">' + esc(e.country) + '</td>' + (all ? '<td>' + esc(C.monthLabel(e.month)) + '</td>' : '')
+          + '<td style="white-space:nowrap">' + dots(e.salesRating) + e.salesRating + '</td><td>' + yn2(e.campaign, e.campaignRating) + '</td><td>' + yn2(e.event, e.eventRating) + '</td>'
+          + '<td>' + yn2(e.biB2B) + '</td><td>' + yn2(e.stockInfo) + '</td></tr>';
+      }).join("") + '</tbody></table></section>';
+
+    /* activities by market */
+    var groups = {}, order = [];
+    rows.forEach(function (e) { var k = e.country + (all ? " · " + C.monthLabel(e.month) : ""); if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(e); });
+    function ul(arr) { return arr.length ? '<ul>' + arr.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>' : '<div class="none">–</div>'; }
+    h += '<section class="r-sec newpage"><h2>Market activities<span>' + esc(label) + ' · developments and wishes for SS27 / AW27</span></h2>'
+      + order.map(function (k) {
+        var g = groups[k], pos = [], neg = [], wish = [];
+        g.forEach(function (e) { if (e.positive) pos.push(e.positive); neg = neg.concat(e.negatives || []); wish = wish.concat(e.wishes || []); });
+        var sr = avg(g.map(function (e) { return e.salesRating; }).filter(Boolean));
+        var c = g.some(function (e) { return e.campaign === "yes"; }), v = g.some(function (e) { return e.event === "yes"; });
+        return '<div class="r-mkt"><div class="hd"><h4>' + esc(k) + '</h4><div class="chips">'
+          + '<span class="chip on">Sales ' + (sr == null ? "–" : (g.length > 1 ? sr.toFixed(1) : sr)) + ' / 5</span>'
+          + '<span class="chip' + (c ? " on" : "") + '">' + (c ? "Campaign" : "No campaign") + '</span>'
+          + '<span class="chip' + (v ? " on" : "") + '">' + (v ? "Event" : "No event") + '</span></div></div>'
+          + '<div class="cols"><div><div class="lbl">Positive</div>' + ul(pos) + '</div><div><div class="lbl">Negative</div>' + ul(neg) + '</div><div><div class="lbl">Wished for SS27 / AW27</div>' + ul(wish) + '</div></div></div>';
+      }).join("") + '</section>';
+
+    if (!all) {
+      var miss = C.MARKETS.filter(function (m) { return markets.indexOf(m) < 0; });
+      if (miss.length) h += '<section class="r-sec"><h2>Markets without feedback<span>' + miss.length + '</span></h2><p class="r-miss">' + esc(miss.join(", ")) + '</p></section>';
+    }
+    h += '<footer class="r-foot"><span>Lisca d.o.o., Sevnica · internal report · Country Sales Managers feedback</span><span>' + esc(label) + ' · generated ' + esc(today) + '</span></footer>';
+    return h;
+  }
+
+  /* ---------- demo only: example answers to try the report ---------- */
+  if (C.DEMO) {
+    $("sample").hidden = false;
+    $("sample").addEventListener("click", function () {
+      var mk = ["Austria", "Croatia", "Czech Republic", "Finland & Baltics", "Germany", "Hungary", "Italy", "Poland", "Serbia", "Slovenia", "Spain", "Switzerland", "United Kingdom", "USA"];
+      var pos = ["New listing with a regional department store chain.", "Strong sell-through of Essentials bras this month.", "Two new independent boutiques placed first orders.", "Good response to the autumn window decoration.", "Online partner extended the assortment for AW26.", "Reorders of Clean Cut basics above plan.", "Swimwear pre-orders for SS27 started early."];
+      var neg = ["Weak footfall in shopping centres.", "Price pressure from online discounters.", "Some colours missing in the size range.", "A key customer reduced open-to-buy for Q4.", "High stock at retailers after a warm autumn.", "Late payments from two smaller customers."];
+      var wish = ["Christmas gift-box offer", "Window kit for the AW27 launch", "Sell-in incentive for new customers", "Staff training on bra fitting", "Social media content package for partners", "Bundle offer on Essentials basics", "Point-of-sale display for swimwear"];
+      var m = C.recentMonths(2)[new Date().getDate() <= 15 ? 1 : 0], chain = Promise.resolve();
+      mk.forEach(function (c, i) {
+        var camp = i % 3 !== 1, ev = i % 4 === 0;
+        var r = { name: "Example " + (i + 1), country: c, month: m, salesRating: [4, 3, 5, 2, 3, 4, 3, 4, 2, 5, 4, 3, 3, 4][i],
+          campaign: camp ? "yes" : "no", campaignRating: camp ? [4, 5, 3, 4, 5][i % 5] : null, event: ev ? "yes" : "no", eventRating: ev ? [5, 3, 4][i % 3] : null,
+          positive: pos[i % pos.length], negatives: i % 5 === 3 ? [neg[i % neg.length]] : [neg[i % neg.length], neg[(i + 2) % neg.length]],
+          wishes: [wish[i % wish.length], wish[(i + 3) % wish.length]].concat(i % 2 ? [wish[(i + 5) % wish.length]] : []),
+          biB2B: i % 5 === 2 ? "no" : "yes", stockInfo: i % 4 === 3 ? "no" : "yes" };
+        chain = chain.then(function () { return C.submit(r); });
+      });
+      chain.then(function () { S.month = m; load(false); toast("Added example answers for " + mk.length + " markets."); });
+    });
   }
 
   var tt;

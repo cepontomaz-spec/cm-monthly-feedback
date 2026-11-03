@@ -38,8 +38,9 @@
         <div class="grid3">
           <div class="fld"><label for="name">Name and surname</label><input id="name" name="name" type="text" autocomplete="name" maxlength="80"></div>
           <div class="fld"><label for="country">Country / market</label><select id="country" name="country"><option value="">Choose…</option></select></div>
-          <div class="fld"><label for="month">Month</label><select id="month" name="month"></select></div>
+          <div class="fld"><label for="month">Feedback for month</label><select id="month" name="month"></select></div>
         </div>
+        <p class="help" style="margin-top:10px">Choose the month your feedback is about – usually the month that has just ended.</p>
         <div class="fld" id="w-other" style="margin-top:14px" hidden><label for="countryOther">Which market?</label><input id="countryOther" type="text" maxlength="60"></div>
         <div class="qerr" hidden></div>
       </div>
@@ -267,9 +268,17 @@ window.CSM = (function () {
     box.innerHTML = '<label><input type="radio" name="' + n + '" value="yes"><span>Yes</span></label><label><input type="radio" name="' + n + '" value="no"><span>No</span></label>';
   });
   $("country").insertAdjacentHTML("beforeend", C.MARKETS.map(function (m) { return '<option>' + esc(m) + '</option>'; }).join("") + '<option value="__other">Other…</option>');
-  var months = C.recentMonths(3);
-  $("month").innerHTML = months.map(function (k, i) { return '<option value="' + k + '"' + (i === 0 ? " selected" : "") + '>' + esc(C.monthLabel(k)) + '</option>'; }).join("");
-  $("util-month").textContent = "Reporting month: " + C.monthLabel(months[0]);
+  /* Until the 15th, feedback is usually about the month that has just ended, so that month is preselected. */
+  var months = C.recentMonths(3), defIdx = new Date().getDate() <= 15 ? 1 : 0;
+  $("month").innerHTML = months.map(function (k, i) { return '<option value="' + k + '"' + (i === defIdx ? " selected" : "") + '>' + esc(C.monthLabel(k)) + '</option>'; }).join("");
+  function sendLabel() { return "Send feedback for " + C.monthLabel($("month").value); }
+  function showMonth() {
+    $("util-month").textContent = "Feedback for: " + C.monthLabel($("month").value);
+    if (!busy) $("send").textContent = sendLabel();
+  }
+  var busy = false;
+  showMonth();
+  $("month").addEventListener("change", showMonth);
 
   try {
     var me = JSON.parse(localStorage.getItem(REMEMBER) || "null");
@@ -332,7 +341,6 @@ window.CSM = (function () {
     return bad;
   }
 
-  var busy = false;
   $("f").addEventListener("submit", function (ev) {
     ev.preventDefault();
     if (busy) return;
@@ -353,7 +361,7 @@ window.CSM = (function () {
       $("formerr").textContent = c === "network" ? "Could not reach the server. Check your connection and send again – your answers are still here."
         : c === "invalid" ? "Some answers could not be accepted (" + (e.field || "check the form") + "). Please review and send again."
         : "Sending failed (" + (c || "error") + "). Please try again in a moment.";
-    }).then(function () { busy = false; $("send").disabled = false; $("send").textContent = "Send feedback"; });
+    }).then(function () { busy = false; $("send").disabled = false; $("send").textContent = sendLabel(); });
   });
 
   function yn(v) { return v === "yes" ? "Yes" : v === "no" ? "No" : "–"; }
