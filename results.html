@@ -26,16 +26,18 @@
 .rep-bar .hint{flex-basis:100%;font-size:12.5px;color:var(--muted)}
 .rep-scroll{flex:1;overflow:auto;padding:24px 16px calc(40px + env(safe-area-inset-bottom,0px))}
 .rep-sheet{
-  --bg:#ffffff;--surface:#ffffff;--wash:#f4f3f1;--line:#e2e1de;--ink:#0d0d0d;--ink-2:#4a4f55;--muted:#7a7e84;--ok:#2f7a57;--bad:#b03f3a;
+  --bg:#ffffff;--surface:#ffffff;--wash:#f4f3f1;--line:#e2e1de;--ink:#0d0d0d;--ink-2:#4a4f55;--muted:#7a7e84;--ok:#2f7a57;--bad:#b03f3a;--blush:#f4e8e2;--blush-2:#e6cfc5;--blush-ink:#8a5f52;
   color-scheme:light;width:210mm;min-height:297mm;margin:0 auto;padding:15mm 14mm 16mm;background:var(--bg);color:var(--ink);
   box-shadow:0 2px 6px rgba(0,0,0,.08),0 14px 40px rgba(0,0,0,.12);font:400 9.5pt/1.45 var(--f-ui)}
 .rep-sheet,.rep-sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
-.r-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8mm;padding-bottom:4mm;border-bottom:1px solid var(--ink)}
+.r-cover{background:var(--blush);padding:7mm 8mm 3mm;margin-bottom:12mm;border-radius:1.5mm 1.5mm 0 0}
+.r-cover.lace-edge::after{bottom:-3.6mm;height:3.7mm;-webkit-mask-size:7.4mm 3.7mm;mask-size:7.4mm 3.7mm}
+.r-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8mm;padding-bottom:4mm;border-bottom:1px solid var(--blush-2)}
 .r-head img{display:block;height:8mm;width:auto}
 .r-head .m{text-align:right;font-size:7.5pt;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .r-head .m b{display:block;color:var(--ink);font-weight:500;font-size:8.5pt}
-.r-title{text-align:center;margin:9mm 0 7mm}
+.r-title{text-align:center;margin:8mm 0 4mm}
 .r-title h1{margin:0;font-size:20pt;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1.15;text-wrap:balance}
 .r-title .eb{margin-top:2.5mm;font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase}
 .r-title .sub{margin:2.5mm auto 0;max-width:120mm;color:var(--ink-2);font-size:9pt}
@@ -43,6 +45,9 @@
 .r-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3.5mm}
 .r-kpi{position:relative;border:1px solid var(--line);border-radius:1.5mm;padding:8mm 5mm 4mm;break-inside:avoid}
 .r-kpi .k{position:absolute;top:3mm;left:5mm;right:3mm;font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-kpi .ki{position:absolute;top:2.6mm;right:3mm;color:var(--blush-ink)}
+.r-kpi .ki .ic{width:4.6mm;height:4.6mm}
+.r-kpi .k{right:10mm!important}
 .r-kpi .v{font-size:19pt;font-weight:500;line-height:1.05;font-variant-numeric:tabular-nums}
 .r-kpi .v small{font-size:9pt;font-weight:400;color:var(--muted)}
 .r-kpi p{margin:1mm 0 0;font-size:8pt;color:var(--ink-2)}
@@ -51,6 +56,8 @@
 .r-sec.newpage{break-before:page}
 .r-sec h2{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;margin:0 0 4mm;padding-bottom:2mm;border-bottom:1px solid var(--ink);font-size:8.5pt;font-weight:500;letter-spacing:.15em;text-transform:uppercase;break-after:avoid}
 .r-sec h2 span{font-size:7.5pt;font-weight:400;letter-spacing:.06em;color:var(--muted)}
+.r-sec h2 b.h{display:inline-flex;align-items:center;gap:2.5mm;font-weight:500}
+.r-sec h2 .ic{width:4.8mm;height:4.8mm;color:var(--blush-ink)}
 .r-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9mm}
 .r-panel{min-width:0;break-inside:avoid}
 .r-panel h3{margin:0 0 1mm;font-size:9pt;font-weight:500}
@@ -65,11 +72,12 @@
 .r-dist .n{font-size:7.5pt;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:.8mm}
 .r-dist .n.z{color:var(--muted);font-weight:400}
 .r-dist .bar{width:62%;background:var(--ink);border-radius:.6mm .6mm 0 0}
+.r-dist .bar.top{background:var(--blush-ink)}
 .r-xl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3mm;margin-top:1.5mm;text-align:center;font-size:6.8pt;line-height:1.25;color:var(--muted);letter-spacing:.04em}
 .r-xl b{display:block;font-size:8pt;color:var(--ink);font-weight:500}
 
 /* horizontal bars by market, scale 0–5 */
-.r-hb{display:grid;grid-template-columns:32mm minmax(0,1fr) 9mm;gap:1.6mm 3mm;align-items:center}
+.r-hb{display:grid;grid-template-columns:40mm minmax(0,1fr) 9mm;gap:1.6mm 3mm;align-items:center}
 .r-hb .lab{font-size:8pt;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .r-hb .trk{position:relative;height:3.4mm;background:repeating-linear-gradient(to right,var(--wash) 0,var(--wash) calc(20% - 1px),var(--line) calc(20% - 1px),var(--line) 20%)}
 .r-hb .fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink)}
@@ -96,19 +104,38 @@
 /* market activities */
 .r-mkt{padding:3.5mm 0 4mm;border-bottom:1px solid var(--line);break-inside:avoid}
 .r-mkt:first-of-type{padding-top:0}
+.r-sec h2+.r-mkt{break-before:avoid}
 .r-mkt .hd{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;flex-wrap:wrap;margin-bottom:2.5mm}
-.r-mkt .hd h4{margin:0;font-size:11pt;font-weight:500}
+.r-mkt .hd h4{margin:0;font-size:11pt;font-weight:500;display:flex;align-items:center;gap:2.5mm}
+/* flags */
+.flag{display:inline-flex;align-items:center;gap:2px;flex:none;vertical-align:-2px;margin-right:9px}
+.flag svg{display:block;width:21px;height:14px;border-radius:2px;box-shadow:0 0 0 .5px rgba(120,120,120,.45)}
+.flag.multi svg{width:13px;height:9px;border-radius:1.5px}
+.flag.none{font-size:9px;font-weight:600;letter-spacing:.06em;width:21px;height:14px;justify-content:center;border-radius:2px;background:var(--wash);color:var(--muted);vertical-align:0}
+.mk .flag{margin-right:6px;vertical-align:-3px}
+.mk .flag svg{width:18px;height:12px}.mk .flag.multi svg{width:11px;height:7.5px}
+.panel h2 .flag{vertical-align:1px}
+.panel h2 .flag svg{width:30px;height:20px}.panel h2 .flag.multi svg{width:18px;height:12px}
+.rep-sheet .flag{margin-right:2mm;gap:.4mm;vertical-align:-.5mm}
+.rep-sheet .flag svg{width:4.8mm;height:3.2mm;border-radius:.4mm;box-shadow:0 0 0 .15mm rgba(0,0,0,.22)}
+.rep-sheet .flag.multi svg{width:3mm;height:2mm}
+.rep-sheet .flag.none{width:4.8mm;height:3.2mm;font-size:5pt}
+.r-mkt .hd h4 .flag{margin-right:0}
+.r-mkt .hd h4 .flag svg{width:7.2mm;height:4.8mm}
+.r-mkt .hd h4 .flag.multi svg{width:4.2mm;height:2.8mm}
+.r-hb .lab .flag{margin-right:1.6mm}
 .r-mkt .chips{display:flex;gap:1.5mm;flex-wrap:wrap}
 .r-mkt .chip{font-size:7pt;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:5mm;padding:.4mm 2.2mm;color:var(--ink-2);white-space:nowrap}
 .r-mkt .chip.on{border-color:var(--ink);color:var(--ink)}
 .r-mkt .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5mm}
 .r-mkt .cols>div{min-width:0}
-.r-mkt .lbl{font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1mm}
+.r-mkt .lbl{display:flex;align-items:center;gap:1.5mm;font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1mm}
+.r-mkt .lbl .ic{width:3.8mm;height:3.8mm;color:var(--blush-ink)}
 .r-mkt ul{margin:0;padding-left:3.5mm;font-size:8.3pt}
 .r-mkt li{margin:0 0 .8mm;overflow-wrap:anywhere}
 .r-mkt .none{font-size:8.3pt;color:var(--muted)}
 .r-miss{font-size:8.5pt;color:var(--ink-2)}
-.r-foot{margin-top:9mm;padding-top:3mm;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:4mm;flex-wrap:wrap;font-size:7pt;color:var(--muted);letter-spacing:.04em}
+.r-foot{margin-top:9mm;padding-top:3mm;display:flex;justify-content:space-between;gap:4mm;flex-wrap:wrap;font-size:7pt;color:var(--muted);letter-spacing:.04em}
 
 @page{size:A4;margin:13mm 13mm 15mm}
 @media print{
@@ -122,6 +149,7 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-sales" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><path d="M5 15l4-4 3 3 6.5-6.5"/><path d="M14.5 7.5h4v4"/></symbol><symbol id="i-campaign" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18 7a7 7 0 0 1 0 10"/></symbol><symbol id="i-event" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M12 12.3l1.2 2.3 2.5.4-1.8 1.7.4 2.5-2.3-1.2-2.3 1.2.4-2.5-1.8-1.7 2.5-.4z"/></symbol><symbol id="i-positive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 11v8.5H4.5V11z"/><path d="M7.5 11l3.8-6.5c1.5 0 2.5 1.1 2.2 2.6L12.9 10H18a2 2 0 0 1 2 2.3l-1 5.5a2 2 0 0 1-2 1.7H7.5"/></symbol><symbol id="i-negative" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10.5v4"/><path d="M12 17.2v.1"/></symbol><symbol id="i-wishes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="1"/><path d="M3.5 7.5h17v2.5h-17z"/><path d="M12 7.5V20"/><path d="M12 7.5C10.5 4.5 7 4 7 6s3 1.5 5 1.5zM12 7.5c1.5-3 5-3.5 5-1.5s-3 1.5-5 1.5z"/></symbol><symbol id="i-bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 16.5v4"/><path d="M8 13v-2.5M12 13V8M16 13V9.5"/></symbol><symbol id="i-stock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l8 4.3v8.4L12 20.5l-8-4.3V7.8z"/><path d="M4 7.8l8 4.4 8-4.4"/><path d="M12 12.2v8.3"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-3.5 3.8-5 7-5s6 1.5 7 5"/></symbol><symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.4 2.4 3.5 5.4 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.4-3.5-8.5s1.1-6.1 3.5-8.5z"/></symbol><symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><path d="M4.5 6.5h.5M4.5 12h.5M4.5 17.5h.5"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol></defs></svg>
 <div id="demo" class="demo" hidden>DEMO MODE – showing answers saved in this browser only. Any password works.</div>
 
 <div class="util"><div class="wrap in">
@@ -291,6 +319,50 @@ window.CSM = (function () {
   var C = window.CSM, Q = C.Q, esc = C.esc;
   function $(id) { return document.getElementById(id); }
   var PW = "lisca-csm-results-key";
+  /* ---------- flags (simplified vector flags, 3:2) ---------- */
+  var FLAG_OF = { "Austria": ["at"], "Bosnia and Herzegovina": ["ba"], "Croatia": ["hr"], "Czech Republic": ["cz"], "Finland & Baltics": ["fi", "ee", "lv", "lt"],
+    "France": ["fr"], "Germany": ["de"], "Hungary": ["hu"], "Italy": ["it"], "Montenegro": ["me"], "North Macedonia": ["mk"], "Poland": ["pl"], "Russia": ["ru"],
+    "Scandinavia": ["dk", "se", "no"], "Serbia": ["rs"], "Slovakia": ["sk"], "Slovenia": ["si"], "Spain": ["es"], "Switzerland": ["ch"], "United Kingdom": ["gb"], "USA": ["us"],
+    "Ireland": ["ie"], "Netherlands": ["nl"], "Belgium": ["be"], "Romania": ["ro"], "Bulgaria": ["bg"], "Greece": ["gr"], "Portugal": ["pt"] };
+  function hb(c) { return '<rect width="30" height="20" fill="' + c[0] + '"/><rect y="6.67" width="30" height="6.66" fill="' + c[1] + '"/><rect y="13.33" width="30" height="6.67" fill="' + c[2] + '"/>'; }
+  function vb(c) { return '<rect width="30" height="20" fill="' + c[0] + '"/><rect x="10" width="10" height="20" fill="' + c[1] + '"/><rect x="20" width="10" height="20" fill="' + c[2] + '"/>'; }
+  function nordic(bg, cr, inner) { return '<rect width="30" height="20" fill="' + bg + '"/><rect x="8" width="5" height="20" fill="' + cr + '"/><rect y="7.5" width="30" height="5" fill="' + cr + '"/>' + (inner ? '<rect x="9.2" width="2.6" height="20" fill="' + inner + '"/><rect y="8.7" width="30" height="2.6" fill="' + inner + '"/>' : ''); }
+  var FLAG_SVG = {
+    at: hb(["#c8102e", "#ffffff", "#c8102e"]),
+    ba: '<rect width="30" height="20" fill="#002395"/><path d="M8.6 0H25v20z" fill="#fecb00"/>' + [0, 1, 2, 3, 4, 5, 6].map(function (i) { return '<circle cx="' + (6.6 + i * 2.6) + '" cy="' + (1.2 + i * 3.1) + '" r=".8" fill="#fff"/>'; }).join(""),
+    hr: hb(["#ff0000", "#ffffff", "#171796"]) + '<path d="M12.5 5.2h5v5.3c0 1.6-1.2 2.6-2.5 3.1-1.3-.5-2.5-1.5-2.5-3.1z" fill="#fff" stroke="#ff0000" stroke-width=".4"/><path d="M12.5 5.2h1.25v1.3H12.5zm2.5 0h1.25v1.3H15zm-1.25 1.3H15v1.3h-1.25zm2.5 0h1.25v1.3h-1.25zM12.5 7.8h1.25v1.3H12.5zm2.5 0h1.25v1.3H15zm-1.25 1.3H15v1.3h-1.25zm2.5 0h1.25v1.3h-1.25zM13.75 10.4H15v1.3h-1.25zM15 11.7h1.25V13H15z" fill="#ff0000"/>',
+    cz: '<rect width="30" height="20" fill="#ffffff"/><rect y="10" width="30" height="10" fill="#d7141a"/><path d="M0 0l15 10L0 20z" fill="#11457e"/>',
+    fi: nordic("#ffffff", "#003580"),
+    ee: hb(["#0072ce", "#000000", "#ffffff"]),
+    lv: '<rect width="30" height="20" fill="#9e3039"/><rect y="8" width="30" height="4" fill="#ffffff"/>',
+    lt: hb(["#fdb913", "#006a44", "#c1272d"]),
+    fr: vb(["#0055a4", "#ffffff", "#ef4135"]),
+    de: hb(["#000000", "#dd0000", "#ffce00"]),
+    hu: hb(["#ce2939", "#ffffff", "#477050"]),
+    it: vb(["#009246", "#ffffff", "#ce2b37"]),
+    me: '<rect width="30" height="20" fill="#d3ae3b"/><rect x="1.2" y="1.2" width="27.6" height="17.6" fill="#c40308"/><path d="M12 5.2h6v5.2c0 2.2-1.6 3.4-3 4-1.4-.6-3-1.8-3-4z" fill="#d3ae3b"/><path d="M13.2 6.6h3.6v3.6c0 1.2-.9 2-1.8 2.4-.9-.4-1.8-1.2-1.8-2.4z" fill="#c40308" opacity=".35"/>',
+    mk: '<rect width="30" height="20" fill="#d20000"/><g fill="#ffe600"><path d="M15 10L13 0h4zM15 10l-2 10h4zM15 10L0 8v4zM15 10l15-2v4zM15 10L0 0h3.5zM15 10L30 0h-3.5zM15 10L0 20h3.5zM15 10l15 10h-3.5z"/><circle cx="15" cy="10" r="3.4" stroke="#d20000" stroke-width=".6"/></g>',
+    pl: '<rect width="30" height="20" fill="#ffffff"/><rect y="10" width="30" height="10" fill="#dc143c"/>',
+    ru: hb(["#ffffff", "#0039a6", "#d52b1e"]),
+    dk: nordic("#c8102e", "#ffffff"),
+    se: nordic("#006aa7", "#fecc02"),
+    no: nordic("#ba0c2f", "#ffffff", "#00205b"),
+    rs: hb(["#c6363c", "#0c4076", "#ffffff"]),
+    sk: hb(["#ffffff", "#0b4ea2", "#ee1c25"]) + '<path d="M6.3 4.8h7v6.6c0 2.6-2 4-3.5 4.7-1.5-.7-3.5-2.1-3.5-4.7z" fill="#ee1c25" stroke="#fff" stroke-width=".5"/><path d="M9.8 6v8M8 8h3.6M7.4 10.3h4.8" stroke="#fff" stroke-width=".9"/><path d="M7 13.4c1-.9 1.9-.9 2.8 0 .9-.9 1.8-.9 2.8 0-.6 1.1-1.7 1.9-2.8 2.4-1.1-.5-2.2-1.3-2.8-2.4z" fill="#0b4ea2"/>',
+    si: hb(["#ffffff", "#005da4", "#ed1c24"]) + '<path d="M5.6 3.2h5.2v4.4c0 1.8-1.4 2.9-2.6 3.4-1.2-.5-2.6-1.6-2.6-3.4z" fill="#005da4" stroke="#ed1c24" stroke-width=".4"/><path d="M5.8 8.2l1.3-1.5.6.6.5-1.2.5 1.2.6-.6 1.3 1.5" fill="none" stroke="#fff" stroke-width=".5"/><path d="M6.6 9.1c.5-.3 1-.3 1.6 0 .5-.3 1-.3 1.6 0" fill="none" stroke="#fff" stroke-width=".35"/><circle cx="7" cy="4.3" r=".35" fill="#fecb00"/><circle cx="9.4" cy="4.3" r=".35" fill="#fecb00"/><circle cx="8.2" cy="5" r=".35" fill="#fecb00"/>',
+    es: '<rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/>',
+    ch: '<rect width="30" height="20" fill="#da291c"/><rect x="13.2" y="4" width="3.6" height="12" fill="#fff"/><rect x="9" y="8.2" width="12" height="3.6" fill="#fff"/>',
+    gb: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.3"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6.6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="4"/>',
+    us: '<rect width="30" height="20" fill="#ffffff"/>' + [0, 2, 4, 6, 8, 10, 12].map(function (i) { return '<rect y="' + (i * 20 / 13).toFixed(2) + '" width="30" height="' + (20 / 13).toFixed(2) + '" fill="#b22234"/>'; }).join("") + '<rect width="12" height="10.77" fill="#3c3b6e"/>' + [0, 1, 2, 3].map(function (r) { return [0, 1, 2, 3, 4].map(function (c) { return '<circle cx="' + (1.4 + c * 2.3 + (r % 2) * 1.1).toFixed(1) + '" cy="' + (1.6 + r * 2.5) + '" r=".45" fill="#fff"/>'; }).join(""); }).join(""),
+    ie: vb(["#169b62", "#ffffff", "#ff883e"]), nl: hb(["#ae1c28", "#ffffff", "#21468b"]), be: vb(["#000000", "#fdda24", "#ef3340"]), ro: vb(["#002b7f", "#fcd116", "#ce1126"]),
+    bg: hb(["#ffffff", "#00966e", "#d62612"]), pt: '<rect width="30" height="20" fill="#ff0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="3.3" fill="#ffcc00"/>',
+    gr: '<rect width="30" height="20" fill="#0d5eaf"/>' + [1, 3, 5, 7].map(function (i) { return '<rect y="' + (i * 20 / 9).toFixed(2) + '" width="30" height="' + (20 / 9).toFixed(2) + '" fill="#fff"/>'; }).join("") + '<rect width="11.1" height="11.1" fill="#0d5eaf"/><rect x="4.44" width="2.22" height="11.1" fill="#fff"/><rect y="4.44" width="11.1" height="2.22" fill="#fff"/>'
+  };
+  function flag(country) {
+    var cs = FLAG_OF[country];
+    if (!cs) return '<span class="flag none" aria-hidden="true">' + esc(String(country || "").replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase()) + '</span>';
+    return '<span class="flag' + (cs.length > 1 ? " multi" : "") + '" aria-hidden="true">' + cs.map(function (c) { return '<svg viewBox="0 0 30 20" preserveAspectRatio="none">' + FLAG_SVG[c] + '</svg>'; }).join("") + '</span>';
+  }
   var S = { key: "", entries: [], month: "", loadedAt: null, open: null, delArmed: false };
   if (C.DEMO) $("demo").hidden = false;
 
@@ -360,7 +432,7 @@ window.CSM = (function () {
   }
   function fmtDate(iso) { try { return new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
 
-  function stat(meta, v, p) { return '<div class="stat"><span class="meta">' + esc(meta) + '</span><div class="v">' + v + '</div>' + (p ? '<p>' + esc(p) + '</p>' : '') + '</div>'; }
+  function stat(meta, v, p, i) { return '<div class="stat"><span class="meta">' + esc(meta) + '</span>' + (i ? '<span class="sic" aria-hidden="true"><svg class="ic"><use href="#i-' + i + '"/></svg></span>' : '') + '<div class="v">' + v + '</div>' + (p ? '<p>' + esc(p) + '</p>' : '') + '</div>'; }
 
   function render() {
     var L = list(), n = L.length, h = "";
@@ -375,12 +447,12 @@ window.CSM = (function () {
     var bi = L.filter(function (e) { return e.biB2B === "yes"; }).length, st = L.filter(function (e) { return e.stockInfo === "yes"; }).length;
 
     h += '<div class="stats">'
-      + stat("Responses", n + (S.month !== "all" ? ' <small>/ ' + C.MARKETS.length + '</small>' : ''), S.month !== "all" ? "markets on the list" : "all months")
-      + stat("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average")
-      + stat("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "response " + f1(avg(campR)) + " / 5" : "no campaigns")
-      + stat("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "response " + f1(avg(evR)) + " / 5" : "no events")
-      + stat("BI reports & B2B", bi + ' <small>/ ' + n + '</small>', "arranged")
-      + stat("Weekly stock info", st + ' <small>/ ' + n + '</small>', "read and passed on")
+      + stat("Responses", n + (S.month !== "all" ? ' <small>/ ' + C.MARKETS.length + '</small>' : ''), S.month !== "all" ? "markets on the list" : "all months", "globe")
+      + stat("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average", "sales")
+      + stat("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "response " + f1(avg(campR)) + " / 5" : "no campaigns", "campaign")
+      + stat("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "response " + f1(avg(evR)) + " / 5" : "no events", "event")
+      + stat("BI reports & B2B", bi + ' <small>/ ' + n + '</small>', "arranged", "bi")
+      + stat("Weekly stock info", st + ' <small>/ ' + n + '</small>', "read and passed on", "stock")
       + '</div>';
 
     if (S.month !== "all") h += coverage(L);
@@ -388,7 +460,7 @@ window.CSM = (function () {
     h += '<div class="block"><div class="lh"><span>Answers by market</span><span class="muted" style="font-size:12px;letter-spacing:.06em">Click a row for all answers</span></div>'
       + '<div class="tbl-wrap"><table class="res"><thead><tr><th>Market</th>' + (S.month === "all" ? '<th>Month</th>' : '') + '<th>Sales</th><th>Campaign</th><th>Event</th><th>BI &amp; B2B</th><th>Stock info</th><th>Sent</th></tr></thead><tbody>'
       + L.map(function (e) {
-        return '<tr data-key="' + esc(e.key) + '" tabindex="0"><td class="who"><b>' + esc(e.country) + '</b><span>' + esc(e.name) + '</span></td>'
+        return '<tr data-key="' + esc(e.key) + '" tabindex="0"><td class="who"><b>' + flag(e.country) + esc(e.country) + '</b><span>' + esc(e.name) + '</span></td>'
           + (S.month === "all" ? '<td>' + esc(C.monthLabel(e.month)) + '</td>' : '')
           + '<td style="white-space:nowrap">' + dots(e.salesRating) + e.salesRating + '</td>'
           + '<td>' + ynCell(e.campaign, e.campaignRating) + '</td><td>' + ynCell(e.event, e.eventRating) + '</td>'
@@ -415,7 +487,7 @@ window.CSM = (function () {
     var extra = Object.keys(got).filter(function (c) { return C.MARKETS.indexOf(c) < 0; });
     var missing = C.MARKETS.filter(function (m) { return !got[m]; }).length;
     return '<div class="block"><div class="lh"><span>Markets</span><span class="muted" style="font-size:12px;letter-spacing:.06em">' + (missing ? missing + " not answered yet" : "all answered") + '</span></div><div class="missing">'
-      + C.MARKETS.concat(extra).map(function (m) { return '<span class="mk' + (got[m] ? " ok" : "") + '">' + (got[m] ? "✓ " : "") + esc(m) + '</span>'; }).join("") + '</div></div>';
+      + C.MARKETS.concat(extra).map(function (m) { return '<span class="mk' + (got[m] ? " ok" : "") + '">' + flag(m) + esc(m) + (got[m] ? " ✓" : "") + '</span>'; }).join("") + '</div></div>';
   }
   function surveyUrl() { return C.DEMO ? "index.html" : location.origin + "/"; }
 
@@ -452,7 +524,7 @@ window.CSM = (function () {
     rows.push([Q.biB2B, yn(e.biB2B)]);
     rows.push([Q.stockInfo, yn(e.stockInfo)]);
     var m = $("modal");
-    m.innerHTML = '<div class="panel" role="dialog" aria-modal="true" aria-labelledby="m-h"><h2 id="m-h">' + esc(e.country) + '</h2><p class="sub">' + esc(e.name) + ' · ' + esc(C.monthLabel(e.month)) + ' · sent ' + esc(fmtDate(e.submittedAt)) + (e.revisions ? ' (edited ' + e.revisions + '×)' : '') + '</p>'
+    m.innerHTML = '<div class="panel" role="dialog" aria-modal="true" aria-labelledby="m-h"><h2 id="m-h">' + flag(e.country) + esc(e.country) + '</h2><p class="sub">' + esc(e.name) + ' · ' + esc(C.monthLabel(e.month)) + ' · sent ' + esc(fmtDate(e.submittedAt)) + (e.revisions ? ' (edited ' + e.revisions + '×)' : '') + '</p>'
       + '<dl class="ans">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join("") + '</dl>'
       + moveBlock(e)
       + '<div class="mfoot"><button class="tbtn danger" type="button" data-act="del">Delete this answer</button><button class="btn" type="button" data-act="close">Close</button></div></div>';
@@ -563,13 +635,17 @@ window.CSM = (function () {
     });
   }
 
+  function ic(n) { return '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+  function hh(i, t) { return '<b class="h">' + ic(i) + esc(t) + '</b>'; }
+  var CODES = { "Austria": "AT", "Bosnia and Herzegovina": "BA", "Croatia": "HR", "Czech Republic": "CZ", "Finland & Baltics": "FB", "France": "FR", "Germany": "DE", "Hungary": "HU", "Italy": "IT", "Montenegro": "ME", "North Macedonia": "MK", "Poland": "PL", "Russia": "RU", "Scandinavia": "SC", "Serbia": "RS", "Slovakia": "SK", "Slovenia": "SI", "Spain": "ES", "Switzerland": "CH", "United Kingdom": "UK", "USA": "US" };
+  function code(c) { return CODES[c] || String(c || "").replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase(); }
   function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
   function counts(vals) { var c = [0, 0, 0, 0, 0]; vals.forEach(function (v) { if (v >= 1 && v <= 5) c[v - 1]++; }); return c; }
 
   function distChart(vals, small) {
     var c = counts(vals), max = Math.max.apply(null, c) || 1, h = '<div class="r-dist' + (small ? " sm" : "") + '">';
     c.forEach(function (n) {
-      h += '<div class="col"><span class="n' + (n ? "" : " z") + '">' + n + '</span><span class="bar" style="height:' + (n / max * 86).toFixed(1) + '%"></span></div>';
+      h += '<div class="col"><span class="n' + (n ? "" : " z") + '">' + n + '</span><span class="bar' + (n && n === max ? " top" : "") + '" style="height:' + (n / max * 86).toFixed(1) + '%"></span></div>';
     });
     h += '</div><div class="r-xl">' + C.SCALE.map(function (s, i) { return '<div><b>' + (i + 1) + '</b>' + esc(s) + '</div>'; }).join("") + '</div>';
     return h;
@@ -577,7 +653,7 @@ window.CSM = (function () {
   function hbars(items) {
     var h = '<div class="r-hb">';
     items.forEach(function (it) {
-      h += '<span class="lab">' + esc(it.label) + '</span><span class="trk"><span class="fill" style="width:' + (it.value / 5 * 100).toFixed(1) + '%"></span></span><span class="val">' + it.value.toFixed(1) + '</span>';
+      h += '<span class="lab">' + flag(it.label) + esc(it.label) + '</span><span class="trk"><span class="fill" style="width:' + (it.value / 5 * 100).toFixed(1) + '%"></span></span><span class="val">' + it.value.toFixed(1) + '</span>';
     });
     h += '<span></span><span class="axis">' + [0, 1, 2, 3, 4, 5].map(function (v) { return '<span style="left:' + (v * 20) + '%">' + v + '</span>'; }).join("") + '</span><span></span>';
     return h + '</div>';
@@ -607,18 +683,18 @@ window.CSM = (function () {
     var campR = camp.map(function (e) { return e.campaignRating; }).filter(Boolean), evR = ev.map(function (e) { return e.eventRating; }).filter(Boolean);
     var bi = L.filter(function (e) { return e.biB2B === "yes"; }).length, st = L.filter(function (e) { return e.stockInfo === "yes"; }).length;
 
-    var h = '<header class="r-head"><img src="logo.png" alt="Lisca"><div class="m"><b>Feedback report · ' + esc(label) + '</b>Country Sales Managers<br>Generated ' + esc(today) + '</div></header>';
+    var h = '<div class="r-cover lace-edge"><header class="r-head"><img src="logo.png" alt="Lisca"><div class="m"><b>Feedback report · ' + esc(label) + '</b>Country Sales Managers<br>Generated ' + esc(today) + '</div></header>';
     h += '<div class="r-title"><div class="eb top">Country Sales Managers · ' + (all ? "Feedback report" : "Monthly feedback report") + '</div><h1 class="month">' + esc(label) + '</h1>'
-      + '<p class="sub">' + (all ? n + ' answers from ' + markets.length + ' markets.' : markets.length + ' of ' + C.MARKETS.length + ' markets answered.') + '</p></div>';
+      + '<p class="sub">' + (all ? n + ' answers from ' + markets.length + ' markets.' : markets.length + ' of ' + C.MARKETS.length + ' markets answered.') + '</p></div></div>';
 
-    function kpi(k, v, p) { return '<div class="r-kpi"><span class="k">' + esc(k) + '</span><div class="v">' + v + '</div><p>' + esc(p) + '</p></div>'; }
+    function kpi(k, v, p, i) { return '<div class="r-kpi"><span class="k">' + esc(k) + '</span><span class="ki">' + ic(i) + '</span><div class="v">' + v + '</div><p>' + esc(p) + '</p></div>'; }
     h += '<div class="r-kpis">'
-      + kpi("Markets answered", markets.length + (all ? "" : ' <small>/ ' + C.MARKETS.length + '</small>'), all ? n + " answers in total" : "on the market list")
-      + kpi("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average rating")
-      + kpi("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "average response " + f1(avg(campR)) + " / 5" : "no campaigns reported")
-      + kpi("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "average response " + f1(avg(evR)) + " / 5" : "no events reported")
-      + kpi("BI reports & B2B access", pct(bi, n) + '<small>%</small>', bi + " of " + n + " arranged")
-      + kpi("Weekly stock information", pct(st, n) + '<small>%</small>', st + " of " + n + " read and passed on")
+      + kpi("Markets answered", markets.length + (all ? "" : ' <small>/ ' + C.MARKETS.length + '</small>'), all ? n + " answers in total" : "on the market list", "globe")
+      + kpi("Sales rating", f1(avg(sales)) + ' <small>/ 5</small>', "average rating", "sales")
+      + kpi("Promotion campaigns", camp.length + ' <small>/ ' + n + '</small>', campR.length ? "average response " + f1(avg(campR)) + " / 5" : "no campaigns reported", "campaign")
+      + kpi("Special events", ev.length + ' <small>/ ' + n + '</small>', evR.length ? "average response " + f1(avg(evR)) + " / 5" : "no events reported", "event")
+      + kpi("BI reports & B2B access", pct(bi, n) + '<small>%</small>', bi + " of " + n + " arranged", "bi")
+      + kpi("Weekly stock information", pct(st, n) + '<small>%</small>', st + " of " + n + " read and passed on", "stock")
       + '</div>';
 
     /* sales */
@@ -626,8 +702,8 @@ window.CSM = (function () {
     L.forEach(function (e) { if (e.salesRating) (byMk[e.country] = byMk[e.country] || []).push(e.salesRating); });
     var items = Object.keys(byMk).map(function (k) { return { label: k, value: avg(byMk[k]) }; })
       .sort(function (a, b) { return b.value - a.value || a.label.localeCompare(b.label); });
-    h += '<section class="r-sec"><h2>Sales for the month<span>1 = very poor · 5 = excellent</span></h2><div class="r-two">'
-      + '<div class="r-panel"><h3>Distribution of ratings</h3><p class="note">' + sales.length + ' answers · average ' + f1(avg(sales)) + ' / 5</p>' + distChart(sales) + '</div>'
+    h += '<section class="r-sec"><h2>' + hh("sales", "Sales for the month") + '<span>1 = very poor · 5 = excellent</span></h2><div class="r-two">'
+      + '<div class="r-panel"><h3>Distribution of ratings</h3><p class="note">' + sales.length + ' answers · average ' + f1(avg(sales)) + ' / 5 · most frequent in colour</p>' + distChart(sales) + '</div>'
       + '<div class="r-panel"><h3>Rating by market</h3><p class="note">' + (all ? "Average across the months shown" : "Highest first") + '</p>' + hbars(items) + '</div>'
       + '</div></section>';
 
@@ -637,13 +713,13 @@ window.CSM = (function () {
         + (ratings.length ? distChart(ratings, true) : '<p class="list">No ' + what + ' reported.</p>')
         + (ratings.length ? '<p class="list"><b>By market:</b> ' + ratingList(L, field, rfield) + '</p>' : '') + '</div>';
     }
-    h += '<section class="r-sec"><h2>Promotions and events<span>response rating 1–5</span></h2><div class="r-two">'
+    h += '<section class="r-sec"><h2>' + hh("campaign", "Promotions and events") + '<span>response rating 1–5</span></h2><div class="r-two">'
       + actPanel("Sales promotion campaigns", camp, campR, "campaign", "campaignRating", "campaigns")
       + actPanel("Special events in the market or at customers", ev, evR, "event", "eventRating", "events")
       + '</div></section>';
 
     /* reports + stock info */
-    h += '<section class="r-sec"><h2>Reports and stock information</h2><div class="r-two">'
+    h += '<section class="r-sec"><h2>' + hh("bi", "Reports and stock information") + '</h2><div class="r-two">'
       + ynShare("Weekly BI reports and B2B access arranged", L, "biB2B")
       + ynShare("Weekly stock information read and passed on", L, "stockInfo")
       + '</div></section>';
@@ -651,10 +727,10 @@ window.CSM = (function () {
     /* overview table */
     var rows = L.slice().sort(function (a, b) { return a.country.localeCompare(b.country) || a.month.localeCompare(b.month); });
     function yn2(v, r) { return v === "yes" ? '<span class="yes">Yes</span>' + (r ? ' · ' + r + '/5' : '') : v === "no" ? '<span class="no">No</span>' : '<span class="na">–</span>'; }
-    h += '<section class="r-sec"><h2>Overview by market<span>' + esc(label) + ' · ' + n + ' answers</span></h2><table class="r-tbl"><thead><tr><th>Market</th>' + (all ? '<th>Month</th>' : '')
+    h += '<section class="r-sec"><h2>' + hh("globe", "Overview by market") + '<span>' + esc(label) + ' · ' + n + ' answers</span></h2><table class="r-tbl"><thead><tr><th>Market</th>' + (all ? '<th>Month</th>' : '')
       + '<th>Sales</th><th>Campaign</th><th>Event</th><th>BI &amp; B2B</th><th>Stock info</th></tr></thead><tbody>'
       + rows.map(function (e) {
-        return '<tr><td class="mk">' + esc(e.country) + '</td>' + (all ? '<td>' + esc(C.monthLabel(e.month)) + '</td>' : '')
+        return '<tr><td class="mk">' + flag(e.country) + esc(e.country) + '</td>' + (all ? '<td>' + esc(C.monthLabel(e.month)) + '</td>' : '')
           + '<td style="white-space:nowrap">' + dots(e.salesRating) + e.salesRating + '</td><td>' + yn2(e.campaign, e.campaignRating) + '</td><td>' + yn2(e.event, e.eventRating) + '</td>'
           + '<td>' + yn2(e.biB2B) + '</td><td>' + yn2(e.stockInfo) + '</td></tr>';
       }).join("") + '</tbody></table></section>';
@@ -663,24 +739,24 @@ window.CSM = (function () {
     var groups = {}, order = [];
     rows.forEach(function (e) { var k = e.country + (all ? " · " + C.monthLabel(e.month) : ""); if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(e); });
     function ul(arr) { return arr.length ? '<ul>' + arr.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>' : '<div class="none">–</div>'; }
-    h += '<section class="r-sec newpage"><h2>Market activities<span>' + esc(label) + ' · developments and wishes for SS27 / AW27</span></h2>'
+    h += '<section class="r-sec"><h2>' + hh("list", "Market activities") + '<span>' + esc(label) + ' · developments and wishes for SS27 / AW27</span></h2>'
       + order.map(function (k) {
         var g = groups[k], pos = [], neg = [], wish = [];
         g.forEach(function (e) { if (e.positive) pos.push(e.positive); neg = neg.concat(e.negatives || []); wish = wish.concat(e.wishes || []); });
         var sr = avg(g.map(function (e) { return e.salesRating; }).filter(Boolean));
         var c = g.some(function (e) { return e.campaign === "yes"; }), v = g.some(function (e) { return e.event === "yes"; });
-        return '<div class="r-mkt"><div class="hd"><h4>' + esc(k) + '</h4><div class="chips">'
+        return '<div class="r-mkt"><div class="hd"><h4>' + flag(g[0].country) + esc(k) + '</h4><div class="chips">'
           + '<span class="chip on">Sales ' + (sr == null ? "–" : (g.length > 1 ? sr.toFixed(1) : sr)) + ' / 5</span>'
           + '<span class="chip' + (c ? " on" : "") + '">' + (c ? "Campaign" : "No campaign") + '</span>'
           + '<span class="chip' + (v ? " on" : "") + '">' + (v ? "Event" : "No event") + '</span></div></div>'
-          + '<div class="cols"><div><div class="lbl">Positive</div>' + ul(pos) + '</div><div><div class="lbl">Negative</div>' + ul(neg) + '</div><div><div class="lbl">Wished for SS27 / AW27</div>' + ul(wish) + '</div></div></div>';
+          + '<div class="cols"><div><div class="lbl">' + ic("positive") + 'Positive</div>' + ul(pos) + '</div><div><div class="lbl">' + ic("negative") + 'Negative</div>' + ul(neg) + '</div><div><div class="lbl">' + ic("wishes") + 'Wished for SS27 / AW27</div>' + ul(wish) + '</div></div></div>';
       }).join("") + '</section>';
 
     if (!all) {
       var miss = C.MARKETS.filter(function (m) { return markets.indexOf(m) < 0; });
-      if (miss.length) h += '<section class="r-sec"><h2>Markets without feedback<span>' + miss.length + '</span></h2><p class="r-miss">' + esc(miss.join(", ")) + '</p></section>';
+      if (miss.length) h += '<section class="r-sec"><h2>' + hh("calendar", "Markets without feedback") + '<span>' + miss.length + '</span></h2><p class="r-miss">' + esc(miss.join(", ")) + '</p></section>';
     }
-    h += '<footer class="r-foot"><span>Lisca d.o.o., Sevnica · internal report · Country Sales Managers feedback</span><span>' + esc(label) + ' · generated ' + esc(today) + '</span></footer>';
+    h += '<div class="lace-line" style="margin-top:9mm"></div><footer class="r-foot" style="margin-top:2mm"><span>Lisca d.o.o., Sevnica · internal report · Country Sales Managers feedback</span><span>' + esc(label) + ' · generated ' + esc(today) + '</span></footer>';
     return h;
   }
 
