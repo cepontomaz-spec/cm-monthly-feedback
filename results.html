@@ -354,12 +354,37 @@ window.CSM = (function () {
     ch: '<rect width="30" height="20" fill="#da291c"/><rect x="13.2" y="4" width="3.6" height="12" fill="#fff"/><rect x="9" y="8.2" width="12" height="3.6" fill="#fff"/>',
     gb: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.3"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6.6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="4"/>',
     us: '<rect width="30" height="20" fill="#ffffff"/>' + [0, 2, 4, 6, 8, 10, 12].map(function (i) { return '<rect y="' + (i * 20 / 13).toFixed(2) + '" width="30" height="' + (20 / 13).toFixed(2) + '" fill="#b22234"/>'; }).join("") + '<rect width="12" height="10.77" fill="#3c3b6e"/>' + [0, 1, 2, 3].map(function (r) { return [0, 1, 2, 3, 4].map(function (c) { return '<circle cx="' + (1.4 + c * 2.3 + (r % 2) * 1.1).toFixed(1) + '" cy="' + (1.6 + r * 2.5) + '" r=".45" fill="#fff"/>'; }).join(""); }).join(""),
+    lu: hb(["#ed2939", "#ffffff", "#00a1de"]),
     ie: vb(["#169b62", "#ffffff", "#ff883e"]), nl: hb(["#ae1c28", "#ffffff", "#21468b"]), be: vb(["#000000", "#fdda24", "#ef3340"]), ro: vb(["#002b7f", "#fcd116", "#ce1126"]),
     bg: hb(["#ffffff", "#00966e", "#d62612"]), pt: '<rect width="30" height="20" fill="#ff0000"/><rect width="12" height="20" fill="#006600"/><circle cx="12" cy="10" r="3.3" fill="#ffcc00"/>',
     gr: '<rect width="30" height="20" fill="#0d5eaf"/>' + [1, 3, 5, 7].map(function (i) { return '<rect y="' + (i * 20 / 9).toFixed(2) + '" width="30" height="' + (20 / 9).toFixed(2) + '" fill="#fff"/>'; }).join("") + '<rect width="11.1" height="11.1" fill="#0d5eaf"/><rect x="4.44" width="2.22" height="11.1" fill="#fff"/><rect y="4.44" width="11.1" height="2.22" fill="#fff"/>'
   };
+  /* other spellings and combined markets typed in via "Other…" (e.g. "Netherlands & Belgium", "Benelux", "Holland") */
+  var FLAG_ALIAS = { "netherlands": ["nl"], "the netherlands": ["nl"], "holland": ["nl"], "nederland": ["nl"], "belgium": ["be"], "belgique": ["be"], "belgie": ["be"], "belgien": ["be"],
+    "luxembourg": ["lu"], "luxemburg": ["lu"], "benelux": ["be", "nl", "lu"], "uk": ["gb"], "great britain": ["gb"], "england": ["gb"], "britain": ["gb"], "united states": ["us"], "us": ["us"], "america": ["us"],
+    "czechia": ["cz"], "bosnia": ["ba"], "bih": ["ba"], "macedonia": ["mk"], "baltics": ["ee", "lv", "lt"], "nordics": ["dk", "se", "no", "fi"], "finland": ["fi"], "estonia": ["ee"], "latvia": ["lv"], "lithuania": ["lt"],
+    "denmark": ["dk"], "sweden": ["se"], "norway": ["no"], "eire": ["ie"], "deutschland": ["de"], "osterreich": ["at"], "schweiz": ["ch"], "suisse": ["ch"], "espana": ["es"], "italia": ["it"], "polska": ["pl"], "hrvatska": ["hr"], "slovenija": ["si"], "srbija": ["rs"],
+    "nizozemska": ["nl"], "belgija": ["be"], "luksemburg": ["lu"], "avstrija": ["at"], "hrvaska": ["hr"], "ceska": ["cz"], "nemcija": ["de"], "madzarska": ["hu"], "italija": ["it"],
+    "poljska": ["pl"], "rusija": ["ru"], "slovaska": ["sk"], "spanija": ["es"], "svica": ["ch"], "velika britanija": ["gb"], "zda": ["us"], "francija": ["fr"], "skandinavija": ["dk", "se", "no"],
+    "crna gora": ["me"], "makedonija": ["mk"], "severna makedonija": ["mk"], "finska": ["fi"], "baltik": ["ee", "lv", "lt"], "irska": ["ie"], "romunija": ["ro"], "bolgarija": ["bg"], "grcija": ["gr"], "portugalska": ["pt"] };
+  function norm(x) { return String(x || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
+  var FLAG_N = {};
+  Object.keys(FLAG_OF).forEach(function (k) { FLAG_N[norm(k)] = FLAG_OF[k]; });
+  Object.keys(FLAG_ALIAS).forEach(function (k) { FLAG_N[k] = FLAG_ALIAS[k]; });
+  function flagCodes(country) {
+    var n = norm(country);
+    if (FLAG_N[n]) return FLAG_N[n];
+    if (FLAG_SVG[n] && n.length === 2) return [n];
+    var out = [];
+    n.split(/\s*(?:&|\+|\/|,|;|\band\b|\bin\b|\bund\b|\bet\b|\bi\b)\s*/).forEach(function (part) {
+      part = part.replace(/^(the)\s+/, "").trim();
+      var cs = FLAG_N[part] || (FLAG_SVG[part] && part.length === 2 ? [part] : null);
+      if (cs) cs.forEach(function (c) { if (out.indexOf(c) < 0) out.push(c); });
+    });
+    return out.length ? out : null;
+  }
   function flag(country) {
-    var cs = FLAG_OF[country];
+    var cs = flagCodes(country);
     if (!cs) return '<span class="flag none" aria-hidden="true">' + esc(String(country || "").replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase()) + '</span>';
     return '<span class="flag' + (cs.length > 1 ? " multi" : "") + '" aria-hidden="true">' + cs.map(function (c) { return '<svg viewBox="0 0 30 20" preserveAspectRatio="none">' + FLAG_SVG[c] + '</svg>'; }).join("") + '</span>';
   }
